@@ -28,6 +28,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmCloseYes = document.getElementById('confirmCloseYes');
   const confirmCloseNo = document.getElementById('confirmCloseNo');
   
+  const winformsMessageBox = document.getElementById('winformsMessageBox');
+  const wfMbTitle = document.getElementById('wfMbTitle');
+  const wfMbIcon = document.getElementById('wfMbIcon');
+  const wfMbMessage = document.getElementById('wfMbMessage');
+  const wfMbOkBtn = document.getElementById('wfMbOkBtn');
+  const wfMbCloseBtn = document.getElementById('wfMbCloseBtn');
+
+  // WinForms Icons (SVG code)
+  const errorIconSvg = `
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" fill="#E81123"/>
+      <path d="M10 10L22 22M22 10L10 22" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
+  `;
+
+  const infoIconSvg = `
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" fill="#185ABD"/>
+      <rect x="14.5" y="14" width="3" height="8" rx="0.5" fill="#ffffff"/>
+      <circle cx="16" cy="10" r="2.2" fill="#ffffff"/>
+    </svg>
+  `;
+
+  function showWinFormsMessageBox(title, iconSvg, message) {
+    if (wfMbTitle) wfMbTitle.textContent = title;
+    if (wfMbIcon) wfMbIcon.innerHTML = iconSvg;
+    if (wfMbMessage) wfMbMessage.textContent = message;
+    if (winformsMessageBox) winformsMessageBox.style.display = 'flex';
+    
+    // Focus the OK button
+    setTimeout(() => {
+      if (wfMbOkBtn) wfMbOkBtn.focus();
+    }, 50);
+  }
+
+  function hideWinFormsMessageBox() {
+    if (winformsMessageBox) winformsMessageBox.style.display = 'none';
+  }
+
+  if (wfMbOkBtn) wfMbOkBtn.addEventListener('click', hideWinFormsMessageBox);
+  if (wfMbCloseBtn) wfMbCloseBtn.addEventListener('click', hideWinFormsMessageBox);
+  
   // 1. Live Clock / Date
   function updateLiveDate() {
     // Only update if not mocked (e.g. during Playwright visual regression testing)
@@ -200,5 +242,69 @@ document.addEventListener('DOMContentLoaded', () => {
       
       detailGrid.style.display = 'none';
     }
+
+    // INTERCEPT RESULTS FOR WINFORMS DIALOGS
+    let wfTitle = "Message";
+    let wfIcon = infoIconSvg;
+    let wfMsg = "";
+
+    if (!result.valid) {
+      const errors = result.errors || [];
+      const hasDayFormat = errors.some(e => e.includes("Ngày không được để trống") || e.includes("Ngày phải là số nguyên"));
+      const hasMonthFormat = errors.some(e => e.includes("Tháng không được để trống") || e.includes("Tháng phải là số nguyên"));
+      const hasYearFormat = errors.some(e => e.includes("Năm không được để trống") || e.includes("Năm phải là số nguyên"));
+      
+      const hasDayRange = errors.some(e => e.includes("Ngày phải nằm trong khoảng 1-31"));
+      const hasMonthRange = errors.some(e => e.includes("Tháng phải nằm trong khoảng 1-12"));
+      const hasYearRange = errors.some(e => e.includes("Năm phải nằm trong khoảng 1000-3000"));
+      
+      const hasDaysInMonthError = errors.some(e => e.includes("chỉ có") && e.includes("ngày"));
+
+      if (hasDayFormat) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Day is incorrect format!";
+      } else if (hasMonthFormat) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Month is incorrect format!";
+      } else if (hasYearFormat) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Year is incorrect format!";
+      } else if (hasDayRange) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Day is out of range!";
+      } else if (hasMonthRange) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Month is out of range!";
+      } else if (hasYearRange) {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = "Input data for Year is out of range!";
+      } else if (hasDaysInMonthError) {
+        wfTitle = "Message";
+        wfIcon = infoIconSvg;
+        const d = String(dayInput.value.trim()).padStart(2, '0');
+        const m = String(monthInput.value.trim()).padStart(2, '0');
+        const y = String(yearInput.value.trim()).padStart(4, '0');
+        wfMsg = `${d}/${m}/${y} is NOT correct date time!`;
+      } else {
+        wfTitle = "Error";
+        wfIcon = errorIconSvg;
+        wfMsg = errors[0] || "An unknown error occurred.";
+      }
+    } else {
+      wfTitle = "Message";
+      wfIcon = infoIconSvg;
+      const d = String(dayInput.value.trim()).padStart(2, '0');
+      const m = String(monthInput.value.trim()).padStart(2, '0');
+      const y = String(yearInput.value.trim()).padStart(4, '0');
+      wfMsg = `${d}/${m}/${y} is correct date time!`;
+    }
+
+    showWinFormsMessageBox(wfTitle, wfIcon, wfMsg);
   }
 });

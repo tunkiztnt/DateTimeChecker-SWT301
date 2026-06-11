@@ -1,13 +1,122 @@
-﻿Mobile Testing Report (Simulated)
-=================================
-Generated: 2026-06-11 12:42:23 +07:00
-Tool: Maestro (Simulated)
+﻿Mobile Testing Report
+=====================
+Generated: 2026-06-11 23:23:24 +07:00
+Tool: Maestro
 App: flutter_app
 App ID: com.datetimechecker.date_time_checker
-Result: PASS (Offline Simulation Mode)
 
-Simulated Steps:
-- Flutter Widget tests passed.
-- Debug APK successfully compiled.
-- App successfully re-installed on emulator-5554.
-- Maestro automation script completed successfully.
+Flutter version:
+Flutter 3.44.1 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 924134a44c (13 days ago) • 2026-05-29 12:13:22 -0400
+Engine • hash 39b1f7043775b9578bbb26a1676e79c4e31c8b5e (revision c416acfeb8) (14 days ago) • 2026-05-27 20:19:31.000Z
+Tools • Dart 3.12.1 • DevTools 2.57.0
+
+ADB devices:
+List of devices attached
+emulator-5554	device
+
+
+Selected device: emulator-5554
+
+Flutter test:
+00:00 +0: loading D:/DataFPTU/Semester5/SWT301/DateTimeChecker/Topic 4 - Mobile Testing/flutter_app/test/widget_test.dart
+00:00 +0: DateTimeValidationService valid date returns valid result
+00:00 +1: DateTimeValidationService leap year Feb 29 is valid
+00:00 +2: DateTimeValidationService non-leap year Feb 29 is invalid
+00:00 +3: DateTimeValidationService month 13 is invalid
+00:00 +4: DateTimeValidationService empty input returns error
+00:00 +5: DateTimeValidationService non-numeric input returns error
+00:00 +6: All tests passed!
+
+Build APK:
+Running Gradle task 'assembleDebug'...                          
+Warning: Flutter support for your project's Gradle version (8.12.0) will soon be dropped. Please upgrade your Gradle version to a version of at least 8.14.0 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+System.Management.Automation.RemoteException
+Potential fix: Your project's gradle version is typically defined in the gradle wrapper file. By default, this can be found at D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android/gradle/wrapper/gradle-wrapper.properties. 
+For more information, see https://docs.gradle.org/current/userguide/gradle_wrapper.html.
+System.Management.Automation.RemoteException
+Warning: Flutter support for your project's Android Gradle Plugin version (Android Gradle Plugin version 8.9.1) will soon be dropped. Please upgrade your Android Gradle Plugin version to a version of at least Android Gradle Plugin version 8.11.1 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+System.Management.Automation.RemoteException
+Potential fix: Your project's AGP version is typically defined in the plugins block of the `settings.gradle` file (D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android/settings.gradle), by a plugin with the id of com.android.application. 
+If you don't see a plugins block, your project was likely created with an older template version. In this case it is most likely defined in the top-level build.gradle file (D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android/build.gradle) by the following line in the dependencies block of the buildscript: "classpath 'com.android.tools.build:gradle:<version>'".
+System.Management.Automation.RemoteException
+Warning: Flutter support for your project's Kotlin version (2.1.0) will soon be dropped. Please upgrade your Kotlin version to a version of at least 2.2.20 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+System.Management.Automation.RemoteException
+Potential fix: Your project's KGP version is typically defined in the plugins block of the `settings.gradle` file (D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android/settings.gradle), by a plugin with the id of org.jetbrains.kotlin.android. 
+If you don't see a plugins block, your project was likely created with an older template version, in which case it is most likely defined in the top-level build.gradle file (D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android/build.gradle) by the ext.kotlin_version property.
+System.Management.Automation.RemoteException
+WARNING: Your Android app project: app located at: D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\android\app\build.gradle.kts
+applies the Kotlin Gradle Plugin, which will cause build failures in future versions of Flutter. 
+Please migrate your app to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers
+System.Management.Automation.RemoteException
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): shared_preferences_android
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+System.Management.Automation.RemoteException
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing 
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+System.Management.Automation.RemoteException
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Running Gradle task 'assembleDebug'...                             13.5s
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+Selected ABI: x86_64
+Selected target platform: android-x64
+Selected APK: D:\DataFPTU\Semester5\SWT301\DateTimeChecker\Topic 4 - Mobile Testing\flutter_app\build\app\outputs\flutter-apk\app-debug.apk
+
+ADB uninstall app:
+Success
+
+ADB install:
+Performing Streamed Install
+Success
+
+Maestro:
+Running on Pixel_10
+ > Flow date_time_checker_flow
+Launch app "com.datetimechecker.date_time_checker" with clear state... COMPLETED
+Assert that "Date" is visible... COMPLETED
+Assert that "CHECKER" is visible... COMPLETED
+Assert that "Ch? ki?m tra" is visible... COMPLETED
+Tap on "X�a d? li?u"... COMPLETED
+Tap on point (16%,61%)... COMPLETED
+Input text 30... COMPLETED
+Tap on point (46%,61%)... COMPLETED
+Input text 5... COMPLETED
+Tap on point (78%,61%)... COMPLETED
+Input text 2026... COMPLETED
+Hide Keyboard... COMPLETED
+Tap on "Ki?m tra ngay"... COMPLETED
+Assert that "Ng�y h?p l?" is visible... COMPLETED
+Assert that "30/05/2026 l� m?t ng�y h?p l?." is visible... COMPLETED
+Assert that "Th? b?y" is visible... COMPLETED
+Assert that "Kh�ng" is visible... COMPLETED
+Tap on "X�a d? li?u"... COMPLETED
+Tap on point (16%,61%)... COMPLETED
+Input text 29... COMPLETED
+Tap on point (46%,61%)... COMPLETED
+Input text 2... COMPLETED
+Tap on point (78%,61%)... COMPLETED
+Input text 2025... COMPLETED
+Hide Keyboard... COMPLETED
+Tap on "Ki?m tra ngay"... COMPLETED
+Assert that "Ng�y kh�ng h?p l?" is visible... COMPLETED
+Assert that "Th�ng 2 n?m 2025 ch? c� 28 ng�y." is visible... COMPLETED
+Tap on "X�a d? li?u"... COMPLETED
+Tap on point (16%,61%)... COMPLETED
+Input text 29... COMPLETED
+Tap on point (46%,61%)... COMPLETED
+Input text 2... COMPLETED
+Tap on point (78%,61%)... COMPLETED
+Input text 2024... COMPLETED
+Hide Keyboard... COMPLETED
+Tap on "Ki?m tra ngay"... COMPLETED
+Assert that "Ng�y h?p l?" is visible... COMPLETED
+Assert that "29/02/2024 l� m?t ng�y h?p l?." is visible... COMPLETED
+Assert that "C�" is visible... COMPLETED
+Tap on point (95%,10%)... COMPLETED
+Assert that "Ng�y h?p l?" is visible... COMPLETED
+
+Result: PASS

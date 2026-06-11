@@ -556,3 +556,132 @@ body {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* WinForms MessageBox Dialog */
+.wf-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  pointer-events: none; /* Allows automated test clicks to pass through overlay */
+}
+
+.wf-modal-card {
+  background-color: #f0f0f0;
+  border: 1px solid #707070;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+  pointer-events: auto; /* Re-enables pointer events on the dialog card */
+}
+
+.wf-modal-header {
+  background: linear-gradient(180deg, #ffffff 0%, #e1e1e1 100%);
+  height: 32px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #a0a0a0;
+  user-select: none;
+}
+
+#wfMbTitle {
+  font-weight: normal;
+  color: #1e1e1e;
+  font-size: 12.5px;
+}
+
+.wf-close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #555555;
+  cursor: pointer;
+  padding: 0 6px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+}
+
+.wf-close-btn:hover {
+  background-color: #e81123;
+  color: #ffffff;
+}
+
+.wf-modal-body {
+  background-color: #ffffff;
+  padding: 24px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.wf-mb-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wf-mb-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.wf-mb-message {
+  color: #000000;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+  padding-top: 4px;
+}
+
+.wf-modal-footer {
+  background-color: #f0f0f0;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dcdcdc;
+  gap: 8px;
+}
+
+.wf-btn-ok {
+  background: linear-gradient(180deg, #f2f2f2 0%, #e1e1e1 100%);
+  border: 1px solid #acacac;
+  padding: 4px 24px;
+  font-size: 12px;
+  color: #000000;
+  cursor: pointer;
+  outline: none;
+  min-width: 80px;
+  text-align: center;
+  transition: all 0.1s ease;
+}
+
+.wf-btn-ok:hover {
+  background: linear-gradient(180deg, #e9e9e9 0%, #d5d5d5 100%);
+  border-color: #0078d7;
+}
+
+.wf-btn-ok:focus {
+  border: 1px solid #0078d7;
+  box-shadow: 0 0 0 1px #0078d7;
+}

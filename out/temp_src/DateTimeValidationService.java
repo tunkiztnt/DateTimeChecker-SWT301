@@ -79,7 +79,7 @@ public final class DateTimeValidationService {
         DateTimeCheckResult result = new DateTimeCheckResult();
         if (request == null) {
             result.valid = false;
-            result.errors.add("YÃªu cáº§u rá»—ng.");
+            result.errors.add("YÃƒÂªu cÃ¡ÂºÂ§u rÃ¡Â»â€”ng.");
             return result;
         }
 
@@ -87,9 +87,9 @@ public final class DateTimeValidationService {
         String mStr = request.month == null ? "" : request.month.trim();
         String yStr = request.year == null ? "" : request.year.trim();
 
-        if (dStr.isEmpty()) result.errors.add("NgÃ y khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng.");
-        if (mStr.isEmpty()) result.errors.add("ThÃ¡ng khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng.");
-        if (yStr.isEmpty()) result.errors.add("NÄƒm khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng.");
+        if (dStr.isEmpty()) result.errors.add("NgÃƒÂ y khÃƒÂ´ng Ã„â€˜Ã†Â°Ã¡Â»Â£c Ã„â€˜Ã¡Â»Æ’ trÃ¡Â»â€˜ng.");
+        if (mStr.isEmpty()) result.errors.add("ThÃƒÂ¡ng khÃƒÂ´ng Ã„â€˜Ã†Â°Ã¡Â»Â£c Ã„â€˜Ã¡Â»Æ’ trÃ¡Â»â€˜ng.");
+        if (yStr.isEmpty()) result.errors.add("NÃ„Æ’m khÃƒÂ´ng Ã„â€˜Ã†Â°Ã¡Â»Â£c Ã„â€˜Ã¡Â»Æ’ trÃ¡Â»â€˜ng.");
 
         if (!result.errors.isEmpty()) {
             result.valid = false;
@@ -102,19 +102,19 @@ public final class DateTimeValidationService {
         try {
             day = Integer.parseInt(dStr);
         } catch (NumberFormatException e) {
-            result.errors.add("NgÃ y pháº£i lÃ  sá»‘ nguyÃªn.");
+            result.errors.add("NgÃƒÂ y phÃ¡ÂºÂ£i lÃƒÂ  sÃ¡Â»â€˜ nguyÃƒÂªn.");
             hasFormatError = true;
         }
         try {
             month = Integer.parseInt(mStr);
         } catch (NumberFormatException e) {
-            result.errors.add("ThÃ¡ng pháº£i lÃ  sá»‘ nguyÃªn.");
+            result.errors.add("ThÃƒÂ¡ng phÃ¡ÂºÂ£i lÃƒÂ  sÃ¡Â»â€˜ nguyÃƒÂªn.");
             hasFormatError = true;
         }
         try {
             year = Integer.parseInt(yStr);
         } catch (NumberFormatException e) {
-            result.errors.add("NÄƒm pháº£i lÃ  sá»‘ nguyÃªn.");
+            result.errors.add("NÃ„Æ’m phÃ¡ÂºÂ£i lÃƒÂ  sÃ¡Â»â€˜ nguyÃƒÂªn.");
             hasFormatError = true;
         }
 
@@ -125,15 +125,15 @@ public final class DateTimeValidationService {
 
         boolean hasRangeError = false;
         if (day < 1 || day > 31) {
-            result.errors.add("NgÃ y pháº£i náº±m trong khoáº£ng 1-31.");
+            result.errors.add("NgÃƒÂ y phÃ¡ÂºÂ£i nÃ¡ÂºÂ±m trong khoÃ¡ÂºÂ£ng 1-31.");
             hasRangeError = true;
         }
         if (month < 1 || month > 12) {
-            result.errors.add("ThÃ¡ng pháº£i náº±m trong khoáº£ng 1-12.");
+            result.errors.add("ThÃƒÂ¡ng phÃ¡ÂºÂ£i nÃ¡ÂºÂ±m trong khoÃ¡ÂºÂ£ng 1-12.");
             hasRangeError = true;
         }
         if (year < 1000 || year > 3000) {
-            result.errors.add("NÄƒm pháº£i náº±m trong khoáº£ng 1000-3000.");
+            result.errors.add("NÃ„Æ’m phÃ¡ÂºÂ£i nÃ¡ÂºÂ±m trong khoÃ¡ÂºÂ£ng 1000-3000.");
             hasRangeError = true;
         }
 
@@ -147,7 +147,7 @@ public final class DateTimeValidationService {
         int maxDays = getDaysInMonth(month, isLeap);
 
         if (day > maxDays) {
-            result.errors.add("ThÃ¡ng " + month + " nÄƒm " + year + " chá»‰ cÃ³ " + maxDays + " ngÃ y.");
+            result.errors.add("ThÃƒÂ¡ng " + month + " nÃ„Æ’m " + year + " chÃ¡Â»â€° cÃƒÂ³ " + maxDays + " ngÃƒÂ y.");
             result.valid = false;
             return result;
         }
@@ -161,7 +161,7 @@ public final class DateTimeValidationService {
 
         result.details = new DateTimeCheckDetails();
         result.details.display = String.format("%02d/%02d/%04d", day, month, year);
-        result.details.leapYear = isLeap ? "CÃ³" : "KhÃ´ng";
+        result.details.leapYear = isLeap ? "CÃƒÂ³" : "KhÃƒÂ´ng";
         result.details.monthDays = String.valueOf(maxDays);
 
         try {
@@ -176,7 +176,7 @@ public final class DateTimeValidationService {
             }
             result.details.weekday = weekday;
         } catch (Exception e) {
-            result.details.weekday = "KhÃ´ng xÃ¡c Ä‘á»‹nh";
+            result.details.weekday = "KhÃƒÂ´ng xÃƒÂ¡c Ã„â€˜Ã¡Â»â€¹nh";
         }
 
         return result;
@@ -194,7 +194,7 @@ public final class DateTimeValidationService {
             case 4:
             case 6:
             case 9:
-            case 11: return 31; // CONTROLLED DEFECT INJECTED BY AI DEMO
+            case 11: return 30; // CONTROLLED DEFECT INJECTED BY AI DEMO
             default: return 31;
         }
     }

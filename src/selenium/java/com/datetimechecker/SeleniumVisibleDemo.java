@@ -78,19 +78,33 @@ public class SeleniumVisibleDemo {
 
                 WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
                 submitBtn.click();
-                Thread.sleep(1000); // Wait for validation and display
+                Thread.sleep(1200); // Wait for validation and display
+
+                // Check if WinForms popup is displayed and click OK to close it
+                try {
+                    WebElement okBtn = driver.findElement(By.id("wfMbOkBtn"));
+                    if (okBtn.isDisplayed()) {
+                        Thread.sleep(800); // Let the user see the MessageBox in the browser
+                        okBtn.click();
+                        Thread.sleep(400); // Wait for popup to fade out
+                    }
+                } catch (Exception e) {
+                    // No popup displayed or not clickable
+                }
 
                 WebElement resultTitle = driver.findElement(By.id("resultTitle"));
                 boolean isActualValid = resultTitle.getText().contains("Ngày hợp lệ");
 
                 boolean isPass = isActualValid == tc.expectedValid;
+                System.out.println("  -> Input: [Day='" + tc.day + "', Month='" + tc.month + "', Year='" + tc.year + "']");
+                System.out.println("     Result: " + (isActualValid ? "VALID" : "INVALID") + " | Expected: " + (tc.expectedValid ? "VALID" : "INVALID"));
                 if (isPass) {
-                    System.out.println(tc.id + " PASS");
+                    System.out.println("     Status: PASS");
                     passed++;
                 } else {
-                    System.out.println(tc.id + " FAIL (Expected: " + tc.expectedValid + ", Actual: " + isActualValid + ")");
+                    System.out.println("     Status: FAIL");
                 }
-                Thread.sleep(1000);
+                Thread.sleep(600);
             }
 
             System.out.println("\nSelenium UI demo results: " + passed + " passed, " + (testCases.size() - passed) + " failed.");

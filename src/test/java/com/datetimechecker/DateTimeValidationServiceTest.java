@@ -92,7 +92,9 @@ public final class DateTimeValidationServiceTest {
             String day,
             String month,
             String year) {
-        return VALIDATOR.validate(new DateTimeCheckRequest(day, month, year));
+        DateTimeCheckResult result = VALIDATOR.validate(new DateTimeCheckRequest(day, month, year));
+        System.out.println("  -> Input: [Day='" + day + "', Month='" + month + "', Year='" + year + "'] | Result: valid=" + result.valid + ", errors=" + result.errors);
+        return result;
     }
 
     private static boolean contains(DateTimeCheckResult result, String text) {

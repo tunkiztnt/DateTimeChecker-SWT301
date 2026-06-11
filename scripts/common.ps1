@@ -50,26 +50,26 @@ function Start-DateTimeCheckerServerForDemo {
     $port = 4173
     Write-Host "Starting background test server on port $port..." -ForegroundColor Yellow
 
-    # Run Java App in background
-    $proc = Start-Process -FilePath $Java -ArgumentList "-cp", $Classes, "com.datetimechecker.App" -PassThru -NoNewWindow
+    # Run Java App in background using a hidden window to prevent console handle sharing and hangs
+    $proc = Start-Process -FilePath $Java -ArgumentList "-cp", $Classes, "com.datetimechecker.App" -PassThru -WindowStyle Hidden
 
     # Wait for the port to open and server to be ready
     $ready = $false
-    for ($i = 0; $i -lt 10; $i++) {
+    for ($i = 0; $i -lt 15; $i++) {
+        $tcp = $null
         try {
             $tcp = New-Object System.Net.Sockets.TcpClient
-            $connect = $tcp.BeginConnect("127.0.0.1", $port, $null, $null)
-            $wait = $connect.AsyncWaitHandle.WaitOne(500, $false)
-            if ($tcp.Connected) {
-                $tcp.Close()
-                $ready = $true
-                break
-            }
-            $tcp.Close()
+            $tcp.Connect("127.0.0.1", $port)
+            $ready = $true
+            break
         } catch {
             # Ignore connection errors while waiting
+        } finally {
+            if ($null -ne $tcp) {
+                $tcp.Close()
+            }
         }
-        Start-Sleep -Milliseconds 500
+        Start-Sleep -Milliseconds 300
     }
 
     if (-not $ready) {

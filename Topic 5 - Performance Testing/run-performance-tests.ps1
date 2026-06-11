@@ -20,8 +20,10 @@ try {
         & npm run test:perf
     }
 } finally {
-    if ($server.Started -and $server.Process -and -not $server.Process.HasExited) {
+    if ($server.Started -and $server.Process) {
         Write-Output "Stopping application server..."
-        Stop-Process -Id $server.Process.Id -Force
+        Stop-Process -Id $server.Process.Id -Force -ErrorAction SilentlyContinue
+        $server.Process.Dispose()
     }
 }
+[System.Environment]::Exit(0)

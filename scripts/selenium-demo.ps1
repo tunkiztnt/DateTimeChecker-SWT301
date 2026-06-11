@@ -7,7 +7,7 @@ if (!(Test-Path $libDir)) {
 }
 
 $seleniumJar = "$libDir\selenium-server.jar"
-$seleniumUrl = "https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-server/4.21.0/selenium-server-4.21.0.jar"
+$seleniumUrl = "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.21.0/selenium-server-4.21.0.jar"
 
 # 2. Download Selenium Standalone Server if missing
 if (!(Test-Path $seleniumJar)) {
@@ -52,7 +52,7 @@ Start-Sleep -Seconds 2
 # 5. Run Selenium visible demo
 Write-Host "Running Selenium E2E Automation Demo (Edge browser will open)..." -ForegroundColor Green
 try {
-    & $tools.Java -cp "$outDir;$seleniumJar" -Ddatetimechecker.url="http://localhost:4173" com.datetimechecker.SeleniumVisibleDemo
+    & $tools.Java -cp "$outDir;$seleniumJar" "-Ddatetimechecker.url=http://localhost:4173" com.datetimechecker.SeleniumVisibleDemo
 } finally {
     # 6. Tear down background server
     Write-Host "Stopping background server..." -ForegroundColor Yellow

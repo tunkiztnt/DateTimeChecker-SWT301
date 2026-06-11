@@ -1,5 +1,5 @@
 ﻿TestID	Name	Input	Expected	Actual	Result
 AI01	KiÃ¡Â»Æ’m thÃ¡Â»Â­ ngÃƒÂ y thÃ†Â°Ã¡Â»Âng hÃ¡Â»Â£p lÃ¡Â»â€¡	30/5/2026	True	True	PASS
-AI02	KiÃ¡Â»Æ’m thÃ¡Â»Â­ ngÃƒÂ y vÃ†Â°Ã¡Â»Â£t biÃƒÂªn cÃ¡Â»Â§a ThÃƒÂ¡ng 4	31/4/2026	False	False	PASS
+AI02	KiÃ¡Â»Æ’m thÃ¡Â»Â­ ngÃƒÂ y vÃ†Â°Ã¡Â»Â£t biÃƒÂªn cÃ¡Â»Â§a ThÃƒÂ¡ng 4	31/4/2026	False	True	FAIL
 AI03	KiÃ¡Â»Æ’m thÃ¡Â»Â­ ngÃƒÂ y nhuÃ¡ÂºÂ­n hÃ¡Â»Â£p lÃ¡Â»â€¡	29/2/2024	True	True	PASS
 AI04	KiÃ¡Â»Æ’m thÃ¡Â»Â­ ngÃƒÂ y nhuÃ¡ÂºÂ­n nÃ„Æ’m thÃ†Â°Ã¡Â»Âng	29/2/2025	False	False	PASS

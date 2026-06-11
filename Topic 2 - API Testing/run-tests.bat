@@ -11,11 +11,12 @@ if errorlevel 1 (
   goto end
 )
 
-echo.
 echo ============================================================
 echo  RUNNING PLAYWRIGHT API TESTS
 echo ============================================================
+pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@api"
+popd
 if errorlevel 1 (
   echo [ERROR] Playwright API tests failed!
   goto end

@@ -25,14 +25,14 @@ echo.
 echo ============================================================
 echo  2. TOPIC 2 - API TESTING (KIEM THU API)
 echo ============================================================
-call npx playwright test --config=playwright.config.js --grep="@api"
+call npx playwright test --config="%~dp0playwright.config.js" --grep="@api"
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Topic 2 - API Testing\run-api-testing.ps1"
 echo.
 
 echo ============================================================
 echo  3. TOPIC 3 - WEB E2E TESTING (KIEM THU DAU-CUOI WEB)
 echo ============================================================
-call npx playwright test --config=playwright.config.js --grep="@e2e"
+call npx playwright test --config="%~dp0playwright.config.js" --grep="@e2e"
 echo.
 
 echo ============================================================
@@ -50,7 +50,7 @@ echo.
 echo ============================================================
 echo  6. TOPIC 6 - VISUAL REGRESSION (KIEM THU KHOP ANH GIAO DIEN)
 echo ============================================================
-call npx playwright test --config=playwright.config.js --grep="@visual"
+call npx playwright test --config="%~dp0playwright.config.js" --grep="@visual"
 echo.
 
 echo ============================================================

@@ -42,7 +42,7 @@ echo.
 
 :: STAGE 2: Unit Testing
 echo ------------------------------------------------------------
-echo  STAGE 2: UNIT TESTING (JAVA & JAVASCRIPT)
+echo  STAGE 2: UNIT TESTING (JAVA AND JAVASCRIPT)
 echo ------------------------------------------------------------
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\test.ps1"
 if errorlevel 1 (
@@ -61,9 +61,11 @@ echo.
 
 :: STAGE 3: API Testing
 echo ------------------------------------------------------------
-echo  STAGE 3: API VALIDATION (PLAYWRIGHT & POWERSHELL)
+echo  STAGE 3: API VALIDATION (PLAYWRIGHT AND POWERSHELL)
 echo ------------------------------------------------------------
+pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@api"
+popd
 if errorlevel 1 (
   set STAGE_3=FAIL
 )
@@ -82,7 +84,9 @@ echo.
 echo ------------------------------------------------------------
 echo  STAGE 4: WEB E2E AUTOMATION (PLAYWRIGHT BROWSER)
 echo ------------------------------------------------------------
+pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@e2e"
+popd
 if errorlevel 1 (
   set STAGE_4=FAIL
 )
@@ -110,7 +114,7 @@ echo.
 
 :: STAGE 6: Performance Testing
 echo ------------------------------------------------------------
-echo  STAGE 6: PERFORMANCE & LATENCY LOAD TESTING
+echo  STAGE 6: PERFORMANCE AND LATENCY LOAD TESTING
 echo ------------------------------------------------------------
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 5 - Performance Testing\run-performance-tests.ps1"
 if errorlevel 1 (
@@ -127,7 +131,9 @@ echo.
 echo ------------------------------------------------------------
 echo  STAGE 7: VISUAL PIXEL-PERFECT CHECK (PLAYWRIGHT SHOTS)
 echo ------------------------------------------------------------
+pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@visual"
+popd
 if errorlevel 1 (
   set STAGE_7=FAIL
 )
@@ -143,7 +149,7 @@ echo ============================================================
 echo  CI/CD PIPELINE INTEGRATION RUN SUMMARY
 echo ============================================================
 echo Stage 1: Build Java Compilation        - %STAGE_1%
-echo Stage 2: Unit Testing (Backend & UI)   - %STAGE_2%
+echo Stage 2: Unit Testing (Backend and UI)   - %STAGE_2%
 echo Stage 3: API Validation                - %STAGE_3%
 echo Stage 4: Web E2E Browser Testing       - %STAGE_4%
 echo Stage 5: Mobile Testing (Maestro/Mock) - %STAGE_5%
@@ -154,7 +160,7 @@ echo ============================================================
 echo Summary: >> %REPORT_FILE%
 echo ----------------------- >> %REPORT_FILE%
 echo Stage 1: Build Java Compilation        - %STAGE_1% >> %REPORT_FILE%
-echo Stage 2: Unit Testing (Backend & UI)   - %STAGE_2% >> %REPORT_FILE%
+echo Stage 2: Unit Testing (Backend and UI)   - %STAGE_2% >> %REPORT_FILE%
 echo Stage 3: API Validation                - %STAGE_3% >> %REPORT_FILE%
 echo Stage 4: Web E2E Browser Testing       - %STAGE_4% >> %REPORT_FILE%
 echo Stage 5: Mobile Testing (Maestro/Mock) - %STAGE_5% >> %REPORT_FILE%

@@ -15,7 +15,9 @@ echo.
 echo ============================================================
 echo  RUNNING PLAYWRIGHT WEB E2E TESTS
 echo ============================================================
+pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@e2e"
+popd
 if errorlevel 1 (
   echo [ERROR] Playwright E2E tests failed!
   goto end

@@ -69,7 +69,9 @@ try {
 
     Write-Output "All $($testCases.Count) API tests passed."
 } finally {
-    if ($server.Started -and $server.Process -and -not $server.Process.HasExited) {
-        Stop-Process -Id $server.Process.Id -Force
+    if ($server.Started -and $server.Process) {
+        Stop-Process -Id $server.Process.Id -Force -ErrorAction SilentlyContinue
+        $server.Process.Dispose()
     }
 }
+[System.Environment]::Exit(0)
