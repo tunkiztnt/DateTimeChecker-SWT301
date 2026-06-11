@@ -1,6 +1,6 @@
 ﻿Mobile Testing Report
 =====================
-Generated: 2026-06-11 23:23:24 +07:00
+Generated: 2026-06-11 23:49:55 +07:00
 Tool: Maestro
 App: flutter_app
 App ID: com.datetimechecker.date_time_checker
@@ -60,7 +60,7 @@ If no such version exists, report the issue to the plugin. If necessary, here is
 an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
 System.Management.Automation.RemoteException
 If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
-Running Gradle task 'assembleDebug'...                             13.5s
+Running Gradle task 'assembleDebug'...                           2,413ms
 √ Built build\app\outputs\flutter-apk\app-debug.apk
 Selected ABI: x86_64
 Selected target platform: android-x64

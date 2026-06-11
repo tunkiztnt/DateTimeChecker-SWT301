@@ -16,19 +16,21 @@ echo ============================================================
 echo  RUNNING VISUAL REGRESSION CHECKS (PLAYWRIGHT SHOTS)
 echo ============================================================
 
-set SNAPSHOT_DIR="%~dp0playwright-visual\visual.spec.js-snapshots"
-if not exist %SNAPSHOT_DIR% (
-  echo [INFO] Không tìm thấy ảnh giao diện gốc (baselines).
-  echo Đang tạo ảnh gốc (baseline screenshots) cho máy của bạn...
-  pushd "%~dp0.."
-  call npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
-  popd
-) else (
-  echo [INFO] Đang so sánh giao diện với ảnh gốc...
-  pushd "%~dp0.."
-  call npx playwright test --config=playwright.config.js --grep="@visual"
-  popd
-)
+if not exist "%~dp0playwright-visual\visual.spec.js-snapshots" goto update_snapshots
+echo [INFO] Đang so sánh giao diện với ảnh gốc...
+pushd "%~dp0.."
+call npx playwright test --config=playwright.config.js --grep="@visual"
+popd
+goto check_status
+
+:update_snapshots
+echo [INFO] Không tìm thấy ảnh giao diện gốc (baselines).
+echo Đang tạo ảnh gốc (baseline screenshots) cho máy của bạn...
+pushd "%~dp0.."
+call npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
+popd
+
+:check_status
 
 if errorlevel 1 (
   echo.
