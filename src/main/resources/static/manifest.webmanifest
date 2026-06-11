@@ -1,0 +1,16 @@
+{
+  "name": "Date Time Checker App",
+  "short_name": "DateTimeChecker",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#1e40af",
+  "description": "An application to check date validity, powered by FPT University.",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

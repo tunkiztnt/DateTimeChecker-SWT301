@@ -1,0 +1,8 @@
+{
+  "defect_detected": true,
+  "file_to_patch": "DateTimeValidationService.java",
+  "bug_description": "HÃ m getDaysInMonth Ä‘ang tráº£ vá» 31 ngÃ y cho ThÃ¡ng 4 (case 4, 6, 9, 11), trong khi ThÃ¡ng 4 chá»‰ cÃ³ tá»‘i Ä‘a 30 ngÃ y.",
+  "suggested_fix": "Thay Ä‘á»•i dÃ²ng 'case 11: return 31;' thÃ nh 'case 11: return 30;' Ä‘á»ƒ khÃ´i phá»¥c Ä‘Ãºng sá»‘ ngÃ y trong ThÃ¡ng 4.",
+  "original_code_snippet": "case 11: return 31;",
+  "replacement_code_snippet": "case 11: return 30;"
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Time Checker - SQA & Testing</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#3b82f6">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Mock Windows OS Style Window Header (without maximize/minimize as per URD) -->
+    <header class="app-header">
+      <div class="header-left">
+        <!-- FPT University Branding logo -->
+        <div class="fu-logo-container">
+          <svg class="fu-logo" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 5H30V12H20V18H28V24H20V35H10V5Z" fill="var(--brand-primary)"/>
+            <path d="M40 5H60V24C60 30 55 35 45 35C35 35 30 30 30 24V5H40V24C40 27 42 28 45 28C48 28 50 27 50 24V5H40Z" fill="var(--brand-secondary)"/>
+            <path d="M70 5H85C92 5 95 8 95 12C95 16 92 18 87 19L96 35H85L77 21H75V35H66V5H70ZM75 13H83C85 13 86 12 86 11C86 10 85 9 83 9H75V13Z" fill="var(--brand-orange)"/>
+            <rect x="100" y="5" width="8" height="30" rx="3" fill="var(--brand-gray)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Theme Switcher -->
+        <button id="themeButton" type="button" class="icon-btn" title="Toggle Light/Dark Theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <!-- Mock Windows Control Buttons (Minimize / Maximize hidden as per URD, only Close) -->
+        <button id="closeButton" type="button" class="close-btn" title="Close App">
+          <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-body">
+      <!-- App Title (Blue color, Arial-like premium typeface, URD spec color blue) -->
+      <div class="app-title-container">
+        <h1 class="app-title">Date Time Checker</h1>
+        <p id="liveDate" class="live-date">Thursday, 11 June 2026</p>
+      </div>
+
+      <div class="grid-container">
+        <!-- Checker Form Section -->
+        <section class="card form-card">
+          <form id="checkerForm" novalidate>
+            <div class="form-group">
+              <label for="day">Day</label>
+              <input type="text" id="day" placeholder="e.g. 30" autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+              <label for="month">Month</label>
+              <input type="text" id="month" placeholder="e.g. 5" autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+              <label for="year">Year</label>
+              <input type="text" id="year" placeholder="e.g. 2026" autocomplete="off">
+            </div>
+
+            <div class="button-group">
+              <button id="clearButton" type="button" class="btn btn-secondary">Clear</button>
+              <button id="nowButton" type="button" class="btn btn-info">Use Today</button>
+              <button type="submit" class="btn btn-primary">Check</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Result Section -->
+        <section class="card result-card">
+          <!-- Empty State (Shown initially) -->
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon-container">
+              <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <p>Vui lòng nhập ngày, tháng, năm và nhấn nút <strong>Check</strong> để kiểm tra tính hợp lệ.</p>
+          </div>
+
+          <!-- Result Content (Hidden initially) -->
+          <div id="resultContent" class="result-content" style="display: none;">
+            <div class="result-header">
+              <div id="resultStatusIcon" class="status-icon">
+                <!-- Will be replaced dynamically -->
+              </div>
+              <h2 id="resultTitle">Ngày hợp lệ</h2>
+            </div>
+            
+            <p id="resultMessage" class="result-message"></p>
+
+            <ul id="errorList" class="error-list" style="display: none;">
+              <!-- Validation errors listed here -->
+            </ul>
+
+            <div id="detailGrid" class="detail-grid" style="display: none;">
+              <div class="detail-item"><span class="detail-label">Thứ</span><span class="detail-value" id="detailWeekday">-</span></div>
+              <div class="detail-item"><span class="detail-label">Năm nhuận</span><span class="detail-value" id="detailLeap">-</span></div>
+              <div class="detail-item"><span class="detail-label">Số ngày trong tháng</span><span class="detail-value" id="detailMonthDays">-</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Custom Modal Dialog (Confirm Exit Message Box) -->
+    <div id="closeModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Confirm Exit</h3>
+        </div>
+        <div class="modal-body">
+          <p>Bạn có chắc chắn muốn đóng ứng dụng DateTimeChecker?</p>
+        </div>
+        <div class="modal-footer">
+          <button id="confirmCloseNo" class="btn btn-secondary">No</button>
+          <button id="confirmCloseYes" class="btn btn-danger">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Entrypoint -->
+  <script src="app.js"></script>
+</body>
+</html>

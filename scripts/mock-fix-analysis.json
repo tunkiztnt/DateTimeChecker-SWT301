@@ -1,0 +1,8 @@
+{
+  "defect_detected": true,
+  "file_to_patch": "DateTimeValidationService.java",
+  "bug_description": "Hàm getDaysInMonth đang trả về 31 ngày cho Tháng 4 (case 4, 6, 9, 11), trong khi Tháng 4 chỉ có tối đa 30 ngày.",
+  "suggested_fix": "Thay đổi dòng 'case 11: return 31;' thành 'case 11: return 30;' để khôi phục đúng số ngày trong Tháng 4.",
+  "original_code_snippet": "case 11: return 31;",
+  "replacement_code_snippet": "case 11: return 30;"
+}
