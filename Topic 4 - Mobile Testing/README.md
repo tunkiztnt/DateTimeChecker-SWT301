@@ -54,3 +54,11 @@ Nếu bạn muốn debug trực quan từng bước trên giao diện di động
    maestro studio
    ```
 3. Trình duyệt sẽ tự động mở trang web giúp bạn kéo thả, thao tác trực tiếp trên máy ảo và lưu kịch bản kiểm thử.
+
+## 5. Log cần giải thích khi quay video
+
+CMD sẽ hiển thị lần lượt: thiết bị Android được kết nối, Flutter widget tests, quá trình build APK, cài APK và các bước Maestro thao tác giao diện.
+
+Nếu thiếu emulator hoặc công cụ mobile, script sẽ ghi rõ đang chạy `Offline Mobile Mock Mode`. Khi quay bài chính thức nên dùng emulator thật để chứng minh ứng dụng được cài và thao tác trên Android.
+
+Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

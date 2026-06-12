@@ -1,43 +1,22 @@
-# Demo Guide - API Testing
+# Hướng dẫn quay demo API Testing
 
-## Muc tieu demo
+## Mục tiêu
 
-Chung minh API backend `POST /api/datetime/check` hoat dong dung theo `ProjectIntroduction.docx`.
+Chứng minh backend `POST /api/datetime/check` hoạt động đúng bằng cách gửi HTTP request trực tiếp, không thao tác giao diện.
 
-## Cac buoc demo
+## Các bước quay
 
-1. Mo file `ProjectIntroduction.docx`.
-2. Giai thich requirement ve input Day, Month, Year va performance trong 1 giay.
-3. Mo file `src/main/java/com/datetimechecker/App.java`.
-4. Chi ra endpoint:
-
-```text
-/api/datetime/check
-```
-
-5. Mo file `API testing/api-test-cases.md`.
-6. Giai thich cac API test case.
-7. Chay lenh:
+1. Mở `api-test-cases.md` và giới thiệu các nhóm dữ liệu hợp lệ, không hợp lệ, giá trị biên và sai định dạng.
+2. Mở `playwright-api/api.spec.js` để chỉ ra phần gửi request và assert response.
+3. Chạy:
 
 ```powershell
-.\API testing\run-api-testing.bat
+.\Topic 2 - API Testing\run-tests.bat
 ```
 
-8. Mo report:
+4. Trong CMD, chỉ vào endpoint, JSON request, expected, actual, response time và kết quả `PASS/FAIL`.
+5. Mở `reports/api-testing-report.tsv` để xem báo cáo tổng hợp.
 
-```text
-reports\api-testing-report.tsv
-```
+## Câu kết luận gợi ý
 
-## Ket qua mong doi
-
-```text
-All 10 API tests passed.
-```
-
-Tat ca response time can nho hon `1000 ms`.
-
-## Cau noi ket luan
-
-> API testing da verify HTTP status code, JSON response, ket qua valid/invalid va performance. Dieu nay chung minh backend API hoat dong dung, khong chi logic service rieng le.
-
+> API Testing đã gửi request trực tiếp đến backend và xác minh HTTP status, JSON response, kết quả nghiệp vụ cùng thời gian phản hồi. Vì vậy bài test không phụ thuộc giao diện web.

@@ -6,21 +6,22 @@ Thư mục này chứa kịch bản kiểm thử giao diện trực quan (**Visu
 
 ## 1. Thành phần
 
-- **Bộ kịch bản so khớp giao diện**: [visual.spec.js](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%206%20-%20Visual%20Regression/playwright-visual/visual.spec.js)
-- **Thư mục chứa ảnh giao diện gốc (Baselines)**: [playwright-visual/visual.spec.js-snapshots/](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%206%20-%20Visual%20Regression/playwright-visual/visual.spec.js-snapshots/)
+- **Bộ kịch bản so khớp giao diện**: `visual/visual.spec.js`
+- **Thư mục chứa ảnh giao diện gốc (Baselines)**: `visual/visual.spec.js-snapshots/`
 
 ---
 
 ## 2. Kịch bản kiểm thử
 
-- **VIS01: Homepage visual screenshot in light theme**
-  - Mở trang chủ ứng dụng ở chế độ sáng (Default light theme).
-  - Tự động thay đổi đồng hồ thời gian thực thành một ngày cố định (`Thursday, 11 June 2026`) để tránh lỗi lệch ảnh do thời gian thay đổi liên tục.
-  - Chụp màn hình trình duyệt và so sánh với ảnh gốc `homepage-light.png`.
-- **VIS02: Homepage visual screenshot in dark theme**
-  - Mở ứng dụng, nhấn nút chuyển giao diện sang chế độ tối (Dark theme).
-  - Đóng băng thời gian thực hiển thị.
-  - Chụp màn hình trình duyệt và so sánh với ảnh gốc `homepage-dark.png`.
+Playwright chụp và so sánh năm trạng thái:
+
+1. `empty-form.png`: form vừa mở và chưa nhập dữ liệu.
+2. `valid-input-entered.png`: đã nhập `15/06/2023` nhưng chưa bấm Check.
+3. `valid-result.png`: kết quả ngày hợp lệ.
+4. `invalid-result.png`: kết quả ngày không tồn tại.
+5. `error-state.png`: lỗi sai định dạng đầu vào.
+
+Ngày hiển thị được cố định thành `Thursday, 11 June 2026` và animation bị tắt để ảnh ổn định.
 
 ---
 
@@ -36,3 +37,9 @@ Thư mục này chứa kịch bản kiểm thử giao diện trực quan (**Visu
 ```powershell
 npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
 ```
+
+## 4. Log cần giải thích khi quay video
+
+CMD sẽ ghi rõ năm trạng thái giao diện đang được chụp và tên baseline tương ứng. Playwright quyết định `PASS` khi ảnh hiện tại khớp baseline trong ngưỡng sai lệch cho phép.
+
+Nếu test thất bại, mở Playwright report để trình bày ba ảnh: expected, actual và diff. Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

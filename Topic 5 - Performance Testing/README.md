@@ -34,3 +34,15 @@ Bạn chỉ cần chạy tệp batch sau:
 ```
 
 *Script sẽ tự động kiểm tra xem `k6` có trong máy của bạn không. Nếu có, nó sẽ chạy k6. Nếu không, nó sẽ tự động chạy Autocannon qua NodeJS để đảm bảo buổi demo của bạn diễn ra suôn sẻ mà không bị gián đoạn.*
+
+## 4. Log cần giải thích khi quay video
+
+CMD sẽ in ba kịch bản:
+
+1. Smoke với 1 connection để kiểm tra server hoạt động.
+2. Load với 10 connections để mô phỏng tải bình thường.
+3. Stress với 50 connections để đánh giá khi tải cao.
+
+Với mỗi kịch bản, giải thích số request, số lỗi, p99 latency, ngưỡng đánh giá và kết quả `PASS/FAIL`. Báo cáo được lưu tại `reports\performance-report.txt`.
+
+Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

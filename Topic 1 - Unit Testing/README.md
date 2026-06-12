@@ -32,3 +32,11 @@ Thư mục này chứa cấu hình và các tài liệu liên quan đến Unit T
 Hoặc chạy các lệnh riêng biệt:
 - Chạy Java Unit Test: `powershell -ExecutionPolicy Bypass -File .\scripts\test.ps1`
 - Chạy JavaScript Unit Test: `npm run test:unit`
+
+## 3. Log cần giải thích khi quay video
+
+CMD sẽ in lần lượt quá trình build, Java test và JavaScript test. Với Java backend, log hiển thị input, giá trị `valid`, danh sách lỗi và trạng thái `PASS`. Với Jest, log hiển thị số test suite và số test đã đạt.
+
+Khi trình bày, nhấn mạnh rằng Unit Testing gọi trực tiếp hàm logic, không mở trình duyệt và không gửi request đến API.
+
+Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md` ở thư mục gốc.

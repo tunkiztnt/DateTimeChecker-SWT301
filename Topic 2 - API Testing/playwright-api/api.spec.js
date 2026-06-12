@@ -1,6 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('API Testing @api', () => {
+  test.beforeEach(async ({}, testInfo) => {
+    console.log(`\n[PLAYWRIGHT API] Running: ${testInfo.title}`);
+    console.log('[FLOW] Build request -> POST API -> read JSON -> assert expected result');
+  });
   
   test('API01: Valid normal date (30/05/2026) @api', async ({ request }) => {
     const startTime = Date.now();
@@ -11,6 +15,7 @@ test.describe('API Testing @api', () => {
 
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} result=${json.result} time=${duration}ms`);
     expect(json.valid).toBe(true);
     expect(json.result).toBe('VALID');
     expect(json.errors).toEqual([]);
@@ -27,6 +32,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} errors=${json.errors.join(' | ')}`);
     expect(json.valid).toBe(false);
     expect(json.result).toBe('INVALID');
     expect(json.errors.some(err => err.includes('chỉ có 30 ngày'))).toBe(true);
@@ -39,6 +45,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} leapYear=${json.details.leapYear}`);
     expect(json.valid).toBe(true);
     expect(json.result).toBe('VALID');
     expect(json.details.leapYear).toBe('Có');
@@ -51,6 +58,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} result=${json.result}`);
     expect(json.valid).toBe(false);
     expect(json.result).toBe('INVALID');
   });
@@ -62,6 +70,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} result=${json.result}`);
     expect(json.valid).toBe(false);
     expect(json.result).toBe('ERROR');
   });
@@ -73,6 +82,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} result=${json.result}`);
     expect(json.valid).toBe(false);
     expect(json.result).toBe('ERROR');
   });
@@ -84,6 +94,7 @@ test.describe('API Testing @api', () => {
     
     expect(response.status()).toBe(200);
     const json = await response.json();
+    console.log(`[ACTUAL] HTTP=${response.status()} valid=${json.valid} result=${json.result}`);
     expect(json.valid).toBe(false);
     expect(json.result).toBe('ERROR');
   });
@@ -95,6 +106,7 @@ test.describe('API Testing @api', () => {
     });
     const endTime = Date.now();
     const responseTime = endTime - startTime;
+    console.log(`[ACTUAL] HTTP=${response.status()} responseTime=${responseTime}ms, threshold<1000ms`);
 
     expect(response.status()).toBe(200);
     expect(responseTime).toBeLessThan(1000);
@@ -129,6 +141,7 @@ test.describe('API Testing @api', () => {
       data: { day: '30', month: '2', year: '2024' }
     });
     const j4 = await r4.json();
+    console.log(`[ACTUAL] format=${j1.result}, range=${j2.result}, valid=${j3.result}, invalidDate=${j4.result}`);
     expect(j4.result).toBe('INVALID');
   });
 
@@ -142,6 +155,7 @@ test.describe('API Testing @api', () => {
     const startTime = Date.now();
     const responses = await Promise.all(requests);
     const duration = Date.now() - startTime;
+    console.log(`[ACTUAL] concurrentRequests=${responses.length}, totalTime=${duration}ms`);
 
     for (const res of responses) {
       expect(res.status()).toBe(200);

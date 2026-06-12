@@ -31,3 +31,11 @@ Thư mục này chứa các kịch bản kiểm thử tự động hóa trên tr
 .\Topic 3 - Web E2E Testing\selenium\run-selenium-demo.bat
 ```
 *(Nếu là lần đầu chạy Selenium, chương trình sẽ tự động tải trình duyệt và WebDriver phù hợp về máy)*
+
+## 3. Log cần giải thích khi quay video
+
+CMD sẽ in từng testcase Selenium theo cấu trúc: dữ liệu được nhập, kết quả giao diện thực tế, kết quả mong đợi và trạng thái `PASS/FAIL`.
+
+Trong video, quay đồng thời cửa sổ Edge và CMD để chứng minh Selenium đang tự động nhập dữ liệu, bấm nút, đọc kết quả trên UI và đối chiếu với expected result.
+
+Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

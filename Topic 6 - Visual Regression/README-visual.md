@@ -22,7 +22,7 @@ When you intentionally modify the UI design (e.g. updating colors, fonts, margin
 
 To update the baseline snapshots with the new layout, run the following command from the root directory:
 ```bash
-npx playwright test --grep="@visual" --update-snapshots
+npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
 ```
 This updates the baseline images in the snapshot directory to match the current look of the application.
 
@@ -38,7 +38,16 @@ To view this interactive report:
 
 ---
 
-## 4. Parameter Explanations
+## 4. Video Demo Checklist
+
+1. Run `.\Topic 6 - Visual Regression\run-tests.bat`.
+2. Show the CMD log naming each UI state and baseline image.
+3. Explain that Playwright captures the current UI and compares pixels with the committed baseline.
+4. If demonstrating a failure, open the Playwright report and show expected, actual, and diff images.
+
+---
+
+## 5. Parameter Explanations
 
 Each screenshot comparison utilizes the following options for visual stability and flexibility:
 

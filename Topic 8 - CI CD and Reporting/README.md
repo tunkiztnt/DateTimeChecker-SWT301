@@ -17,7 +17,8 @@ Thư mục này chứa kịch bản mô phỏng tích hợp liên tục (CI/CD) 
   5. **STAGE 5 (Mobile)**: Chạy kịch bản kiểm thử di động giả lập.
   6. **STAGE 6 (Performance)**: Đo lường và đánh giá hiệu năng chịu tải phản hồi với Autocannon.
   7. **STAGE 7 (Visual)**: Chụp ảnh màn hình giao diện thực tế và so sánh pixel-perfect với ảnh gốc (baseline) nhằm phát hiện lỗi lệch giao diện.
-  8. **Summary & Report**: Tổng hợp trạng thái PASS/FAIL của từng giai đoạn và xuất báo cáo hợp nhất.
+  8. **AI-Assisted Testing**: Chạy demo AI-assisted/self-healing ở chế độ offline sample.
+  9. **Summary & Report**: Tổng hợp trạng thái PASS/FAIL/SKIPPED và xuất báo cáo pipeline.
 
 ---
 
@@ -27,7 +28,7 @@ Tất cả các bài kiểm thử đều tự động ghi lại lịch sử và 
 
 1. **Báo cáo tích hợp CI/CD (Pipeline Report)**:
    - Tập tin: [reports/ci-pipeline-report.txt](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/reports/ci-pipeline-report.txt)
-   - Chứa kết quả tổng quan trạng thái chạy của 7 giai đoạn.
+   - Chứa kết quả tổng quan trạng thái chạy của 8 giai đoạn.
 2. **Báo cáo API (PowerShell)**:
    - Tập tin: [reports/api-testing-report.tsv](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/reports/api-testing-report.tsv)
    - Chứa thông tin về các API endpoint, dữ liệu đầu vào, kết quả mong đợi so với thực tế và thời gian phản hồi (ms) định dạng TSV dễ dàng import vào Excel.
@@ -40,3 +41,28 @@ Tất cả các bài kiểm thử đều tự động ghi lại lịch sử và 
      ```powershell
      npx playwright show-report reports/playwright-report
      ```
+
+## 3. Cách chạy và log cần giải thích khi quay video
+
+Chạy:
+
+```powershell
+.\Topic 8 - CI CD and Reporting\run-ci-simulation.bat
+```
+
+CMD sẽ hiển thị từng stage với:
+
+- `WHAT`: stage đó đang kiểm tra điều gì.
+- `PASS IF`: điều kiện để stage được xem là đạt.
+- Log thật từ công cụ bên dưới, ví dụ Jest, Playwright, Selenium, Autocannon.
+- Trạng thái cuối stage: `PASS`, `FAIL` hoặc `SKIPPED`.
+
+Nếu một stage thất bại, các stage phụ thuộc phía sau sẽ bị bỏ qua. Phần cuối là `PIPELINE SUMMARY`, liệt kê trạng thái của cả 8 stage và tổng số stage đạt, lỗi, bị bỏ qua. Cửa sổ CMD sẽ dừng ở cuối để nhóm có thể quay màn hình hoặc đọc log.
+
+Báo cáo được ghi tại:
+
+```text
+reports\ci-pipeline-report.txt
+```
+
+Trong video, giải thích CI/CD dùng kết quả tự động này để quyết định code có đủ điều kiện tích hợp hoặc phát hành hay không. Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

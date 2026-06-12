@@ -23,7 +23,7 @@ module.exports = defineConfig({
     }
   ],
   webServer: {
-    command: 'powershell -NoProfile -ExecutionPolicy Bypass -Command ". ./scripts/common.ps1; Stop-RunningServer; java -cp out/classes com.datetimechecker.App"',
+    command: 'powershell -NoProfile -ExecutionPolicy Bypass -File "./scripts/run-web-server.ps1"',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',

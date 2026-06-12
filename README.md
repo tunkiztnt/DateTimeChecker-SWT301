@@ -1,5 +1,7 @@
 # DateTimeChecker — SWT301 SQA Demo Project
 
+> Nhóm quay video demo: xem `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`. Mỗi script của Topic 1-8 hiện in trực tiếp mục tiêu, quy trình, dữ liệu kiểm thử và kết quả trong CMD.
+
 ## What This Project Demonstrates
 This university demo project demonstrates 8 key SQA topics including Unit, API, Web E2E, Mobile, Performance, Visual Regression, AI-Assisted, and CI/CD testing using Jest, Playwright, Selenium, Flutter, Maestro, and Autocannon.
 

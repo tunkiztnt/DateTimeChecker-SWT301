@@ -3,6 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Visual Regression Testing @visual', () => {
 
   test.beforeEach(async ({ page }) => {
+    console.log('\n[VISUAL FLOW] Open page -> stabilize date/animations -> capture screenshot -> compare baseline');
     // Navigate to the app home page
     await page.goto('/');
     
@@ -16,6 +17,7 @@ test.describe('Visual Regression Testing @visual', () => {
   });
 
   test('State 1 @visual: empty-form', async ({ page }) => {
+    console.log('[CAPTURE] State 1: empty form -> baseline empty-form.png');
     // State 1: empty-form — page just loaded, all inputs empty
     await expect(page).toHaveScreenshot('empty-form.png', {
       maxDiffPixels: 100,        // allow minor rendering differences
@@ -25,6 +27,7 @@ test.describe('Visual Regression Testing @visual', () => {
   });
 
   test('State 2 @visual: valid-input-entered', async ({ page }) => {
+    console.log('[CAPTURE] State 2: entered 15/06/2023 -> baseline valid-input-entered.png');
     // State 2: valid-input-entered — filled with 15/06/2023, before clicking Check
     await page.getByLabel('Day').fill('15');
     await page.getByLabel('Month').fill('6');
@@ -38,6 +41,7 @@ test.describe('Visual Regression Testing @visual', () => {
   });
 
   test('State 3 @visual: valid-result', async ({ page }) => {
+    console.log('[CAPTURE] State 3: submit valid date -> baseline valid-result.png');
     // State 3: valid-result — after clicking Check with valid date, shows VALID
     await page.getByLabel('Day').fill('15');
     await page.getByLabel('Month').fill('6');
@@ -60,6 +64,7 @@ test.describe('Visual Regression Testing @visual', () => {
   });
 
   test('State 4 @visual: invalid-result', async ({ page }) => {
+    console.log('[CAPTURE] State 4: submit invalid date -> baseline invalid-result.png');
     // State 4: invalid-result — after clicking Check with 29/02/2023, shows INVALID
     await page.getByLabel('Day').fill('29');
     await page.getByLabel('Month').fill('2');
@@ -82,6 +87,7 @@ test.describe('Visual Regression Testing @visual', () => {
   });
 
   test('State 5 @visual: error-state', async ({ page }) => {
+    console.log('[CAPTURE] State 5: submit format error -> baseline error-state.png');
     // State 5: error-state — after clicking Check with day="abc", shows error
     await page.getByLabel('Day').fill('abc');
     await page.getByLabel('Month').fill('1');

@@ -1,5 +1,7 @@
 # Dependency directories
 node_modules/
+.secrets/
+.idea/
 
 # Build outputs
 out/

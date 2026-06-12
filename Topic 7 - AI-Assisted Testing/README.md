@@ -31,4 +31,24 @@ Thư mục này chứa các tệp tin và hướng dẫn demo chức năng kiể
 
 ## 3. Cách chuẩn bị Gemini API Key
 
-Bạn có thể tạo một API Key miễn phí tại [Google AI Studio](https://aistudio.google.com/app/apikey). Key sẽ được lưu cục bộ dưới dạng mã hóa trên máy tính của bạn tại thư mục `.secrets` và không bao giờ bị đẩy lên Git.
+Bạn có thể tạo API Key tại [Google AI Studio](https://aistudio.google.com/app/apikey). Key sẽ được mã hóa bằng tài khoản Windows hiện tại, lưu cục bộ trong thư mục `.secrets` và không bị đẩy lên Git.
+
+Topic 7 mặc định sử dụng model ổn định `gemini-2.5-flash`. Nếu Gemini API báo lỗi, chương trình sẽ hiển thị nguyên nhân cụ thể:
+
+- `API key not valid` hoặc `PERMISSION_DENIED`: key sai, bị thu hồi hoặc không có quyền.
+- `RESOURCE_EXHAUSTED`: đã vượt quota/rate limit.
+- `NOT_FOUND`: model được cấu hình không tồn tại hoặc đã ngừng hoạt động.
+
+Để nhập lại key, chạy `reset-gemini-key.bat`, sau đó mở lại `ai-assistant-chat.bat`.
+
+## 4. Log cần giải thích khi quay video
+
+Trong CMD, chỉ rõ ba vai trò:
+
+1. Prompt tự nhiên do tester nhập.
+2. AI phân tích yêu cầu, sinh testcase hoặc đề xuất cách sửa.
+3. Tester review kết quả và quyết định có áp dụng đề xuất hay không.
+
+Để quay quy trình rõ nhất, nhập `/demo-self-heal`. Nếu mạng hoặc Gemini API gặp lỗi, dùng `ai-assistant-chat-offline-sample.bat` để tập dượt. Không để lộ API key trong video.
+
+Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

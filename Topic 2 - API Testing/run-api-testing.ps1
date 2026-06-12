@@ -25,6 +25,14 @@ $rows.Add("id`tname`tinput`texpected_valid`tactual_valid`tstatus_code`telapsed_m
 $failures = New-Object System.Collections.Generic.List[string]
 
 try {
+    Write-Output ""
+    Write-Output "[API TEST FLOW]"
+    Write-Output "1. Tao JSON body tu du lieu test."
+    Write-Output "2. Gui POST request den $serverUrl/api/datetime/check."
+    Write-Output "3. Doc HTTP status va JSON response."
+    Write-Output "4. So sanh actual valid voi expected valid va nguong 1000 ms."
+    Write-Output ""
+
     foreach ($testCase in $testCases) {
         $body = @{
             day = $testCase.Day
@@ -46,7 +54,13 @@ try {
         $result = if ($passed) { "PASS" } else { "FAIL" }
         $input = "$($testCase.Day)/$($testCase.Month)/$($testCase.Year)"
 
-        Write-Output "$($testCase.Id) $result - $($testCase.Name) - $input - $($elapsed.ElapsedMilliseconds) ms"
+        Write-Output "------------------------------------------------------------"
+        Write-Output "[$($testCase.Id)] $($testCase.Name)"
+        Write-Output "  Request : POST /api/datetime/check"
+        Write-Output "  JSON    : $($body -replace '\s+', ' ')"
+        Write-Output "  Expected: HTTP 200, valid=$($testCase.ExpectedValid), time<=1000ms"
+        Write-Output "  Actual  : HTTP $($response.StatusCode), valid=$($json.valid), time=$($elapsed.ElapsedMilliseconds)ms"
+        Write-Output "  Result  : $result"
         $rows.Add("$($testCase.Id)`t$($testCase.Name)`t$input`t$($testCase.ExpectedValid)`t$($json.valid)`t$($response.StatusCode)`t$($elapsed.ElapsedMilliseconds)`t$result")
 
         if (-not $passed) {

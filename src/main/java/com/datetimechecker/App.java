@@ -106,6 +106,9 @@ public final class App {
             byte[] content = Files.readAllBytes(file);
             Headers headers = exchange.getResponseHeaders();
             headers.set("Content-Type", contentType(file));
+            headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+            headers.set("Pragma", "no-cache");
+            headers.set("Expires", "0");
             exchange.sendResponseHeaders(200, "HEAD".equalsIgnoreCase(exchange.getRequestMethod()) ? -1 : content.length);
             if (!"HEAD".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try (OutputStream output = exchange.getResponseBody()) {

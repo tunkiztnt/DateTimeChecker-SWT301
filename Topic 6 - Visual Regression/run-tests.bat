@@ -3,8 +3,14 @@ chcp 65001 > nul
 title Topic 6 - Visual Regression Testing
 
 echo ============================================================
-echo  STARTING APPLICATION SERVER
+echo  TOPIC 6 - VISUAL REGRESSION TESTING
 echo ============================================================
+echo [MUC TIEU] Phat hien giao dien bi lech sau khi thay doi code.
+echo [CONG CU] Playwright screenshot comparison.
+echo [QUY TRINH] Chup giao dien hien tai - so voi baseline - tao diff neu khac.
+echo [TRANG THAI] Empty, valid input, valid result, invalid result, error.
+echo.
+echo [BUOC 1/3] Khoi dong application server...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\start-server.ps1"
 if errorlevel 1 (
   echo [ERROR] Không thể khởi động server!
@@ -13,7 +19,7 @@ if errorlevel 1 (
 
 echo.
 echo ============================================================
-echo  RUNNING VISUAL REGRESSION CHECKS (PLAYWRIGHT SHOTS)
+echo [BUOC 2/3] Playwright chup va so sanh 5 trang thai giao dien
 echo ============================================================
 
 if not exist "%~dp0visual\visual.spec.js-snapshots" goto update_snapshots
@@ -35,7 +41,7 @@ set TEST_STATUS=%ERRORLEVEL%
 
 echo.
 echo ============================================================
-echo  STOPPING APPLICATION SERVER
+echo [BUOC 3/3] Dung application server
 echo ============================================================
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\stop-server.ps1"
 
@@ -51,6 +57,7 @@ echo.
 echo ============================================================
 echo  VISUAL REGRESSION COMPLETED SUCCESSFULLY!
 echo ============================================================
+echo [KET LUAN] Tat ca anh hien tai khop baseline trong nguong cho phep.
 
 :end
 echo.

@@ -1,7 +1,8 @@
 function Get-JavaTools {
-    # Check if javac is in current PATH
-    $javac = Get-Command javac -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-    $java = Get-Command java -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+    # Always run with java.exe from the same JDK as javac.exe.
+    $javacCommand = Get-Command javac -ErrorAction SilentlyContinue | Select-Object -First 1
+    $javac = if ($javacCommand) { $javacCommand.Source } else { $null }
+    $java = if ($javac) { Join-Path (Split-Path $javac) "java.exe" } else { $null }
 
     if ($null -eq $javac) {
         # Check standard installation paths on Windows
@@ -27,6 +28,11 @@ function Get-JavaTools {
     if ($null -eq $javac) {
         Write-Host "[ERROR] Could not find JDK compiler (javac.exe)." -ForegroundColor Red
         Write-Host "Please ensure JDK is installed and javac is accessible." -ForegroundColor Yellow
+        exit 1
+    }
+
+    if (-not (Test-Path -LiteralPath $java)) {
+        Write-Host "[ERROR] Could not find java.exe next to the selected javac.exe." -ForegroundColor Red
         exit 1
     }
 

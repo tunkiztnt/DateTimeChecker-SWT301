@@ -1,0 +1,378 @@
+HƯỚNG DẪN CHẠY VÀ QUAN SÁT 8 TOPIC - DATETIMECHECKER
+=====================================================
+
+Thư mục dự án:
+C:\Github-Jel-ui\AllDateTimeChecker
+
+
+I. CHUẨN BỊ TRƯỚC KHI CHẠY
+---------------------------
+
+1. Mở PowerShell hoặc Command Prompt tại thư mục dự án:
+
+   cd "C:\Github-Jel-ui\AllDateTimeChecker"
+
+2. Máy cần có Java JDK, Node.js và npm.
+
+3. Nếu đây là lần đầu chạy các bài test Node.js/Playwright:
+
+   npm install
+   npx playwright install chromium
+
+4. Không cần mở run.bat trước khi chạy Topic 1 đến Topic 8.
+   Các script test cần thiết sẽ tự khởi động server DateTimeChecker.
+
+5. Nếu muốn mở web DateTimeChecker để thử thủ công:
+
+   .\run.bat
+
+   Trình duyệt sẽ mở tại:
+   http://localhost:4173
+
+
+II. TOPIC 1 - UNIT TESTING
+--------------------------
+
+Mục đích:
+Kiểm tra riêng từng hàm xử lý, không cần thao tác trên trình duyệt.
+Topic này chạy Java Unit Test cho backend và Jest Unit Test cho JavaScript.
+
+Cách chạy:
+
+   & ".\Topic 1 - Unit Testing\run-tests.bat"
+
+Cách xem nó đang chạy:
+- Cửa sổ terminal hiện phần RUNNING JAVA UNIT TESTS.
+- Sau đó terminal hiện phần RUNNING JAVASCRIPT UNIT TESTS.
+- Từng testcase sẽ hiện PASS hoặc kết quả thành công.
+
+Kết quả thành công cần thấy:
+
+   ALL UNIT TESTS COMPLETED SUCCESSFULLY!
+
+File chính:
+- Topic 1 - Unit Testing\run-tests.bat: chạy toàn bộ Unit Test.
+- src\test\java\com\datetimechecker\DateTimeValidationServiceTest.java:
+  các testcase Java backend.
+- Topic 1 - Unit Testing\javascript-unit-testing\date-helpers.test.js:
+  các testcase Jest cho JavaScript.
+
+
+III. TOPIC 2 - API TESTING
+--------------------------
+
+Mục đích:
+Gửi HTTP request trực tiếp đến API POST /api/datetime/check và kiểm tra
+status code, JSON trả về, kết quả hợp lệ/không hợp lệ và thời gian phản hồi.
+
+Cách chạy:
+
+   & ".\Topic 2 - API Testing\run-tests.bat"
+
+Cách xem nó đang chạy:
+- Script biên dịch Java và tự khởi động server.
+- Playwright gửi request API tự động, không cần mở trình duyệt.
+- PowerShell tiếp tục chạy 10 testcase API.
+- Terminal hiện từng dòng API01, API02... với PASS hoặc FAIL.
+
+Kết quả thành công cần thấy:
+
+   ALL API TESTS COMPLETED SUCCESSFULLY!
+
+Báo cáo:
+
+   reports\api-testing-report.tsv
+
+Mở file TSV bằng Notepad hoặc Excel để xem input, expected result,
+actual result, status code và elapsed time của từng testcase.
+
+Demo bằng Postman:
+- Import hai file JSON trong:
+  Topic 2 - API Testing\postman
+- Chọn environment DateTimeChecker API Testing.
+- Mở request và bấm Send để xem response JSON.
+
+File chính:
+- Topic 2 - API Testing\run-tests.bat: chạy toàn bộ API test.
+- Topic 2 - API Testing\playwright-api\api.spec.js: testcase Playwright API.
+- Topic 2 - API Testing\run-api-testing.ps1: testcase PowerShell và tạo report.
+- Topic 2 - API Testing\api-test-cases.md: danh sách testcase API.
+- Topic 2 - API Testing\demo-guide.md: hướng dẫn demo API.
+
+
+IV. TOPIC 3 - WEB E2E TESTING
+-----------------------------
+
+Mục đích:
+Giả lập hành vi người dùng trên web từ đầu đến cuối: nhập ngày, bấm nút,
+xem kết quả, xóa dữ liệu và đổi giao diện sáng/tối.
+
+Cách chạy Playwright E2E:
+
+   & ".\Topic 3 - Web E2E Testing\run-tests.bat"
+
+Cách xem Playwright đang chạy:
+- Khi chạy run-tests.bat, Chromium sẽ hiện trên màn hình.
+- Playwright tự điền dữ liệu, bấm nút, xóa dữ liệu và đổi giao diện.
+- Các thao tác được làm chậm để có thể quan sát khi trình bày.
+- Terminal hiện từng testcase E2E01 đến E2E05.
+- Mỗi testcase sẽ hiện passed hoặc failed.
+- Khi Topic 3 chạy bên trong CI/CD, trình duyệt sẽ chạy ẩn để hoàn thành nhanh.
+
+Kết quả thành công cần thấy:
+
+   ALL WEB E2E TESTS COMPLETED SUCCESSFULLY!
+
+Cách demo trực quan bằng Selenium:
+
+   & ".\Topic 3 - Web E2E Testing\selenium\run-selenium-demo.bat"
+
+Cách xem Selenium đang chạy:
+- Microsoft Edge mở lên.
+- Selenium tự nhập dữ liệu, bấm nút và kiểm tra kết quả.
+- Đây là cách phù hợp để trình bày trực tiếp cho giảng viên.
+- Lần đầu chạy cần Internet để tải selenium-server.jar.
+
+File chính:
+- Topic 3 - Web E2E Testing\run-tests.bat: chạy Playwright E2E.
+- Topic 3 - Web E2E Testing\playwright-e2e\e2e.spec.js: các testcase E2E.
+- Topic 3 - Web E2E Testing\selenium\run-selenium-demo.bat:
+  chạy Selenium demo có thể nhìn thấy.
+
+
+V. TOPIC 4 - MOBILE TESTING
+---------------------------
+
+Mục đích:
+Kiểm tra DateTimeChecker trên ứng dụng Flutter bằng Maestro, Android Emulator
+hoặc điện thoại Android thật.
+
+Cách chạy:
+
+   & ".\Topic 4 - Mobile Testing\run-tests.bat"
+
+Cách xem nó đang chạy:
+- Nếu có Flutter, ADB, Maestro và thiết bị Android:
+  script build APK, cài app lên thiết bị và Maestro tự thao tác trên app.
+- Nếu máy thiếu công cụ hoặc chưa mở Android Emulator:
+  script tự chuyển sang Offline Mobile Mock Mode và hiện quy trình giả lập.
+
+Kết quả thành công cần thấy:
+
+   MOBILE TESTING COMPLETED SUCCESSFULLY!
+
+Báo cáo:
+
+   reports\mobile-testing-report.txt
+
+Demo mobile thật:
+1. Mở Android Emulator hoặc kết nối điện thoại có USB Debugging.
+2. Kiểm tra thiết bị:
+
+   adb devices
+
+3. Chạy lại run-tests.bat.
+
+File chính:
+- Topic 4 - Mobile Testing\run-tests.bat: chạy mobile testing.
+- Topic 4 - Mobile Testing\flutter_app: mã nguồn Flutter.
+- Topic 4 - Mobile Testing\maestro\date_time_checker_flow.yaml:
+  các thao tác Maestro trên giao diện mobile.
+- Topic 4 - Mobile Testing\mobile-test-cases.md: danh sách testcase mobile.
+- Topic 4 - Mobile Testing\demo-guide.md: hướng dẫn demo mobile.
+
+
+VI. TOPIC 5 - PERFORMANCE TESTING
+---------------------------------
+
+Mục đích:
+Tạo nhiều request đồng thời để đo tốc độ phản hồi và khả năng chịu tải của API.
+
+Cách chạy:
+
+   & ".\Topic 5 - Performance Testing\run-tests.bat"
+
+Cách xem nó đang chạy:
+- Script tự khởi động server DateTimeChecker.
+- Nếu máy có k6, script chạy k6 load test.
+- Nếu không có k6, script tự dùng Autocannon.
+- Terminal hiện số request, request/giây, average latency, max latency và errors.
+
+Kết quả thành công cần thấy:
+
+   PERFORMANCE TESTING COMPLETED SUCCESSFULLY!
+
+Kết quả PASS của Autocannon yêu cầu average latency nhỏ hơn 1000 ms.
+Kết quả k6 yêu cầu 95% request có thời gian phản hồi nhỏ hơn 200 ms.
+
+File chính:
+- Topic 5 - Performance Testing\run-tests.bat: chạy performance test.
+- Topic 5 - Performance Testing\k6\load-test.js: kịch bản k6.
+- Topic 5 - Performance Testing\benchmark\autocannon-test.js:
+  kịch bản Autocannon dự phòng.
+
+
+VII. TOPIC 6 - VISUAL REGRESSION
+--------------------------------
+
+Mục đích:
+Chụp ảnh giao diện và so sánh với ảnh mẫu để phát hiện giao diện bị lệch,
+đổi màu hoặc mất thành phần sau khi sửa code.
+
+Cách chạy:
+
+   & ".\Topic 6 - Visual Regression\run-tests.bat"
+
+Cách xem nó đang chạy:
+- Playwright mở trang web ở chế độ sáng và tối.
+- Hệ thống chụp ảnh và so sánh với baseline screenshots.
+- Terminal hiện VIS01 và VIS02 passed hoặc failed.
+
+Kết quả thành công cần thấy:
+
+   VISUAL REGRESSION COMPLETED SUCCESSFULLY!
+
+Ảnh mẫu nằm tại:
+
+   Topic 6 - Visual Regression\playwright-visual\visual.spec.js-snapshots
+
+Nếu giao diện đã được thay đổi có chủ ý và cần tạo lại ảnh mẫu:
+
+   npm run test:visual:update
+
+File chính:
+- Topic 6 - Visual Regression\run-tests.bat: chạy visual regression.
+- Topic 6 - Visual Regression\playwright-visual\visual.spec.js:
+  kịch bản chụp và so sánh ảnh.
+- visual.spec.js-snapshots: ảnh baseline dùng để so sánh.
+
+
+VIII. TOPIC 7 - AI-ASSISTED TESTING
+-----------------------------------
+
+Mục đích:
+Dùng AI Gemini để trò chuyện, sinh testcase, phân tích lỗi và minh họa
+quy trình self-healing trên bản sao source tạm.
+
+Cách chạy AI thật:
+
+   & ".\Topic 7 - AI-Assisted Testing\ai-assistant-chat.bat"
+
+Lần đầu chạy, nhập Gemini API key khi được hỏi.
+Sau khi mở chat, có thể nhập:
+
+   Vui lòng giúp tôi testing project DateTimeChecker để tìm lỗi.
+
+Để chạy demo self-healing, nhập:
+
+   /demo-self-heal
+
+Cách chạy offline không cần API key:
+
+   & ".\Topic 7 - AI-Assisted Testing\ai-assistant-chat-offline-sample.bat"
+
+Sau đó nhập:
+
+   /demo-self-heal
+
+Cách xem nó đang chạy:
+- Terminal hiện từng bước AI sinh testcase.
+- Hệ thống tạo controlled defect trong bản sao source tạm.
+- Test phát hiện testcase FAIL.
+- AI phân tích và đề xuất cách sửa.
+- Regression test chạy lại để xác nhận kết quả.
+- Source production không bị thay đổi.
+
+Báo cáo:
+- reports\ai-generated-testcases.json
+- reports\ai-selenium-failures-before-fix.tsv
+- reports\ai-fix-analysis.json
+- reports\ai-selenium-failures-after-fix.tsv
+
+File chính:
+- Topic 7 - AI-Assisted Testing\ai-assistant-chat.bat: chat Gemini thật.
+- Topic 7 - AI-Assisted Testing\ai-assistant-chat-offline-sample.bat:
+  demo offline dự phòng.
+- Topic 7 - AI-Assisted Testing\AI-ASSISTED-TESTING-DEMO.md:
+  tài liệu demo chi tiết.
+- Topic 7 - AI-Assisted Testing\reset-gemini-key.bat:
+  xóa API key cũ để nhập key mới.
+
+
+IX. TOPIC 8 - CI/CD AND REPORTING
+---------------------------------
+
+Mục đích:
+Mô phỏng một CI/CD pipeline cục bộ. Pipeline tự build và chạy lần lượt
+Unit Test, API Test, Web E2E, Mobile, Performance và Visual Regression.
+
+Cách chạy:
+
+   & ".\Topic 8 - CI CD and Reporting\run-ci-simulation.bat"
+
+Cách xem nó đang chạy:
+- Terminal hiện STAGE 1 đến STAGE 7.
+- Mỗi stage có trạng thái PASS hoặc FAIL.
+- Cuối quy trình hiện bảng tổng kết của pipeline.
+
+Kết quả thành công cần thấy:
+
+   [SUCCESS] PIPELINE PASSED SUCCESSFULLY!
+
+Báo cáo tổng hợp:
+
+   reports\ci-pipeline-report.txt
+
+File chính:
+- Topic 8 - CI CD and Reporting\run-ci-simulation.bat:
+  chạy toàn bộ local CI/CD pipeline.
+- Topic 8 - CI CD and Reporting\README.md:
+  giải thích các stage và các loại báo cáo.
+
+Lưu ý:
+Topic 8 hiện là mô phỏng CI/CD cục bộ, chưa phải GitHub Actions trên cloud.
+
+
+X. CHẠY TOÀN BỘ 8 TOPIC
+------------------------
+
+Nếu muốn chạy liên tục tất cả topic:
+
+   .\run-all-topics.bat
+
+Topic 7 trong lệnh này sẽ dùng Offline Sample và Auto Approve.
+Quá trình sẽ mất nhiều thời gian hơn so với chạy riêng từng topic.
+
+
+XI. CÁCH TRÌNH BÀY DEMO ĐỂ QUAN SÁT RÕ NHẤT
+-------------------------------------------
+
+- Topic 1: xem testcase PASS/FAIL trên terminal.
+- Topic 2: xem request/response bằng Postman và mở api-testing-report.tsv.
+- Topic 3: dùng Selenium demo để thấy Edge tự thao tác.
+- Topic 4: dùng Android Emulator nếu có; nếu không thì nói rõ đây là mock mode.
+- Topic 5: chỉ vào requests/second, latency và errors trên terminal.
+- Topic 6: mở thư mục snapshot để giải thích ảnh baseline.
+- Topic 7: chạy offline sample trước; dùng Gemini thật khi API key hoạt động.
+- Topic 8: mở ci-pipeline-report.txt sau khi pipeline chạy xong.
+
+
+XII. CÁC LỖI THƯỜNG GẶP
+------------------------
+
+1. Lỗi "npm is not recognized" hoặc "npx is not recognized":
+   Cài Node.js LTS, đóng terminal cũ và mở terminal mới.
+
+2. Playwright báo thiếu browser:
+
+   npx playwright install chromium
+
+3. Báo cổng 4173 đang được sử dụng:
+   Đóng cửa sổ run.bat hoặc server DateTimeChecker đang chạy, sau đó thử lại.
+
+4. Mobile chỉ chạy mock mode:
+   Mở Android Emulator hoặc kết nối điện thoại, sau đó kiểm tra bằng adb devices.
+
+5. Gemini API bị lỗi:
+   Dùng ai-assistant-chat-offline-sample.bat để demo dự phòng.
+

@@ -36,3 +36,11 @@ Thư mục này chứa các thành phần kiểm thử API cho cổng kết nố
 Hoặc chạy các lệnh riêng lẻ:
 - Chạy Playwright API tests: `npm run test:api`
 - Chạy PowerShell API tests: `powershell -ExecutionPolicy Bypass -File ".\Topic 2 - API Testing\run-api-testing.ps1"`
+
+## 3. Log cần giải thích khi quay video
+
+CMD sẽ hiển thị endpoint, JSON request, kết quả mong đợi, HTTP status, giá trị `valid`, thời gian phản hồi và trạng thái `PASS/FAIL` của từng testcase.
+
+Điểm cần nói rõ: API Testing không thao tác giao diện. Test gửi HTTP request trực tiếp đến backend rồi xác minh response JSON.
+
+Báo cáo chi tiết được tạo tại `reports\api-testing-report.tsv`. Kịch bản quay tổng hợp nằm tại `HUONG-DAN-QUAY-VIDEO-8-TOPIC.md`.

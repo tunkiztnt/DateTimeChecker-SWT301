@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => registration.update())
+      .catch((error) => console.warn('Service worker update failed:', error));
+  }
+
   // DOM Elements
   const checkerForm = document.getElementById('checkerForm');
   const dayInput = document.getElementById('day');
