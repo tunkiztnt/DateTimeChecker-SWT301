@@ -33,6 +33,7 @@ public final class App {
         int port = readPort();
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", port), 0);
         server.createContext("/api/datetime/check", new DateTimeCheckHandler());
+        server.createContext("/api/check-date", new DateTimeCheckHandler());
         server.createContext("/", new StaticFileHandler());
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();

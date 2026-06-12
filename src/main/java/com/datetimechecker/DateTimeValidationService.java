@@ -2,11 +2,96 @@ package com.datetimechecker;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
+import java.util.List;
+import java.util.ArrayList;
 
-public final class DateTimeValidationService {
+public class DateTimeValidationService {
+
+    public static final String RESULT_VALID = "VALID";
+    public static final String RESULT_INVALID = "INVALID";
+    public static final String RESULT_ERROR = "ERROR";
+
+    public static class ValidationResult {
+        public final String result;  // "VALID", "INVALID", or "ERROR"
+        public final String message; // human-readable explanation
+
+        public ValidationResult(String result, String message) {
+            this.result = result;
+            this.message = message;
+        }
+    }
+
+    /**
+     * Validate a date given string inputs (as received from HTTP params).
+     * Returns a ValidationResult with result ("VALID"/"INVALID"/"ERROR")
+     * and a human-readable message.
+     */
+    public ValidationResult validate(String dayStr, String monthStr, String yearStr) {
+        // Step 1: Check null/blank
+        if (dayStr == null || dayStr.trim().isEmpty()) {
+            return new ValidationResult(RESULT_ERROR, "Ngày không được để trống.");
+        }
+        if (monthStr == null || monthStr.trim().isEmpty()) {
+            return new ValidationResult(RESULT_ERROR, "Tháng không được để trống.");
+        }
+        if (yearStr == null || yearStr.trim().isEmpty()) {
+            return new ValidationResult(RESULT_ERROR, "Năm không được để trống.");
+        }
+
+        // Step 2: Check each is a valid integer (no decimals, no letters)
+        if (dayStr.contains(".") || monthStr.contains(".") || yearStr.contains(".")) {
+            return new ValidationResult(RESULT_ERROR, "Ngày, tháng, năm phải là số nguyên.");
+        }
+
+        int day, month, year;
+        try {
+            day = Integer.parseInt(dayStr.trim());
+        } catch (NumberFormatException e) {
+            return new ValidationResult(RESULT_ERROR, "Ngày phải là số nguyên.");
+        }
+        try {
+            month = Integer.parseInt(monthStr.trim());
+        } catch (NumberFormatException e) {
+            return new ValidationResult(RESULT_ERROR, "Tháng phải là số nguyên.");
+        }
+        try {
+            year = Integer.parseInt(yearStr.trim());
+        } catch (NumberFormatException e) {
+            return new ValidationResult(RESULT_ERROR, "Năm phải là số nguyên.");
+        }
+
+        // Step 3: Check ranges: day 1-31, month 1-12, year 1000-3000
+        if (day < 1 || day > 31) {
+            return new ValidationResult(RESULT_ERROR, "Ngày phải nằm trong khoảng 1-31.");
+        }
+        if (month < 1 || month > 12) {
+            return new ValidationResult(RESULT_ERROR, "Tháng phải nằm trong khoảng 1-12.");
+        }
+        if (year < 1000 || year > 3000) {
+            return new ValidationResult(RESULT_ERROR, "Năm phải nằm trong khoảng 1000-3000.");
+        }
+
+        // Step 4: Use LocalDate.of(year, month, day) in a try-catch
+        //         → success = VALID, DateTimeException = INVALID
+        try {
+            LocalDate.of(year, month, day);
+            return new ValidationResult(RESULT_VALID, "Ngày hợp lệ.");
+        } catch (java.time.DateTimeException e) {
+            // Find the correct maxDays for the month to build the custom message
+            boolean isLeap = ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
+            int maxDays;
+            switch (month) {
+                case 2: maxDays = isLeap ? 29 : 28; break;
+                case 4: case 6: case 9: case 11: maxDays = 30; break;
+                default: maxDays = 31;
+            }
+            String msg = "Tháng " + month + " năm " + year + " chỉ có " + maxDays + " ngày.";
+            return new ValidationResult(RESULT_INVALID, msg);
+        }
+    }
+
+    // --- Backwards compatibility code for App.java and DateTimeValidationServiceTest.java ---
 
     public static final class DateTimeCheckRequest {
         public String day;
@@ -37,6 +122,8 @@ public final class DateTimeValidationService {
 
     public static final class DateTimeCheckResult {
         public boolean valid;
+        public String result;
+        public String message;
         public List<String> errors = new ArrayList<>();
         public DateTimeCheckParts parts;
         public DateTimeCheckDetails details;
@@ -45,6 +132,8 @@ public final class DateTimeValidationService {
             StringBuilder sb = new StringBuilder();
             sb.append("{");
             sb.append("\"valid\":").append(valid).append(",");
+            sb.append("\"result\":\"").append(result != null ? result : (valid ? "VALID" : "ERROR")).append("\",");
+            sb.append("\"message\":\"").append(message != null ? message.replace("\"", "\\\"") : "").append("\",");
             sb.append("\"errors\":[");
             for (int i = 0; i < errors.size(); i++) {
                 sb.append("\"").append(errors.get(i).replace("\"", "\\\"")).append("\"");
@@ -79,123 +168,50 @@ public final class DateTimeValidationService {
         DateTimeCheckResult result = new DateTimeCheckResult();
         if (request == null) {
             result.valid = false;
+            result.result = RESULT_ERROR;
+            result.message = "Yêu cầu rỗng.";
             result.errors.add("Yêu cầu rỗng.");
             return result;
         }
 
-        String dStr = request.day == null ? "" : request.day.trim();
-        String mStr = request.month == null ? "" : request.month.trim();
-        String yStr = request.year == null ? "" : request.year.trim();
+        ValidationResult valRes = validate(request.day, request.month, request.year);
+        result.result = valRes.result;
+        result.message = valRes.message;
 
-        if (dStr.isEmpty()) result.errors.add("Ngày không được để trống.");
-        if (mStr.isEmpty()) result.errors.add("Tháng không được để trống.");
-        if (yStr.isEmpty()) result.errors.add("Năm không được để trống.");
+        if (RESULT_VALID.equals(valRes.result)) {
+            result.valid = true;
 
-        if (!result.errors.isEmpty()) {
-            result.valid = false;
-            return result;
-        }
+            int day = Integer.parseInt(request.day.trim());
+            int month = Integer.parseInt(request.month.trim());
+            int year = Integer.parseInt(request.year.trim());
 
-        int day = 0, month = 0, year = 0;
-        boolean hasFormatError = false;
+            result.parts = new DateTimeCheckParts();
+            result.parts.day = day;
+            result.parts.month = month;
+            result.parts.year = year;
 
-        try {
-            day = Integer.parseInt(dStr);
-        } catch (NumberFormatException e) {
-            result.errors.add("Ngày phải là số nguyên.");
-            hasFormatError = true;
-        }
-        try {
-            month = Integer.parseInt(mStr);
-        } catch (NumberFormatException e) {
-            result.errors.add("Tháng phải là số nguyên.");
-            hasFormatError = true;
-        }
-        try {
-            year = Integer.parseInt(yStr);
-        } catch (NumberFormatException e) {
-            result.errors.add("Năm phải là số nguyên.");
-            hasFormatError = true;
-        }
-
-        if (hasFormatError) {
-            result.valid = false;
-            return result;
-        }
-
-        boolean hasRangeError = false;
-        if (day < 1 || day > 31) {
-            result.errors.add("Ngày phải nằm trong khoảng 1-31.");
-            hasRangeError = true;
-        }
-        if (month < 1 || month > 12) {
-            result.errors.add("Tháng phải nằm trong khoảng 1-12.");
-            hasRangeError = true;
-        }
-        if (year < 1000 || year > 3000) {
-            result.errors.add("Năm phải nằm trong khoảng 1000-3000.");
-            hasRangeError = true;
-        }
-
-        if (hasRangeError) {
-            result.valid = false;
-            return result;
-        }
-
-        // Check leap year and month days
-        boolean isLeap = isLeapYear(year);
-        int maxDays = getDaysInMonth(month, isLeap);
-
-        if (day > maxDays) {
-            result.errors.add("Tháng " + month + " năm " + year + " chỉ có " + maxDays + " ngày.");
-            result.valid = false;
-            return result;
-        }
-
-        result.valid = true;
-        
-        result.parts = new DateTimeCheckParts();
-        result.parts.day = day;
-        result.parts.month = month;
-        result.parts.year = year;
-
-        result.details = new DateTimeCheckDetails();
-        result.details.display = String.format("%02d/%02d/%04d", day, month, year);
-        result.details.leapYear = isLeap ? "Có" : "Không";
-        result.details.monthDays = String.valueOf(maxDays);
-
-        try {
             LocalDate date = LocalDate.of(year, month, day);
-            String weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("vi", "VN"));
-            // Capitalize first letter
+            boolean isLeap = date.isLeapYear();
+            int maxDays = date.lengthOfMonth();
+
+            String weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("vi", "VN"));
             if (weekday != null) {
                 weekday = weekday.toLowerCase();
                 if (!weekday.isEmpty()) {
                     weekday = weekday.substring(0, 1).toUpperCase() + weekday.substring(1);
                 }
             }
+
+            result.details = new DateTimeCheckDetails();
+            result.details.display = String.format("%02d/%02d/%04d", day, month, year);
+            result.details.leapYear = isLeap ? "Có" : "Không";
+            result.details.monthDays = String.valueOf(maxDays);
             result.details.weekday = weekday;
-        } catch (Exception e) {
-            result.details.weekday = "Không xác định";
+        } else {
+            result.valid = false;
+            result.errors.add(valRes.message);
         }
 
         return result;
-    }
-
-    private boolean isLeapYear(int year) {
-        if (year % 400 == 0) return true;
-        if (year % 100 == 0) return false;
-        return year % 4 == 0;
-    }
-
-    private int getDaysInMonth(int month, boolean isLeap) {
-        switch (month) {
-            case 2: return isLeap ? 29 : 28;
-            case 4:
-            case 6:
-            case 9:
-            case 11: return 30;
-            default: return 31;
-        }
     }
 }

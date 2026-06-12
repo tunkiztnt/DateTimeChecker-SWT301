@@ -40,12 +40,50 @@ function Get-JavaTools {
     }
 }
 
+function Stop-RunningServer {
+    param(
+        [int]$Port = 4173
+    )
+    Write-Host "Checking for any running processes on port $Port..." -ForegroundColor Yellow
+    
+    # Try using Get-NetTCPConnection (PowerShell 4.0+)
+    $connections = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
+    if ($connections) {
+        foreach ($conn in $connections) {
+            $pid = $conn.OwningProcess
+            if ($pid -and $pid -ne 0 -and $pid -ne $PID) {
+                Write-Host "Found process $pid listening on port $Port. Killing it..." -ForegroundColor Cyan
+                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 1
+            }
+        }
+    } else {
+        # Fallback using netstat
+        $netstat = netstat -ano | Select-String "LISTENING" | Select-String ":$Port\s"
+        if ($netstat) {
+            foreach ($line in $netstat) {
+                if ($line.Line -match '\s+(\d+)\s*$') {
+                    $pid = $Matches[1]
+                    if ($pid -and $pid -ne 0 -and $pid -ne $PID) {
+                        Write-Host "Found process $pid listening on port $Port via netstat. Killing it..." -ForegroundColor Cyan
+                        Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+                        Start-Sleep -Seconds 1
+                    }
+                }
+            }
+        }
+    }
+}
+
 function Start-DateTimeCheckerServerForDemo {
     param(
         [string]$Java,
         [string]$Classes,
         [string]$Root
     )
+
+    # Free up port 4173 first
+    Stop-RunningServer
 
     $port = 4173
     Write-Host "Starting background test server on port $port..." -ForegroundColor Yellow

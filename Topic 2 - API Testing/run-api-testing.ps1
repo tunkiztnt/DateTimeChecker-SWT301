@@ -3,10 +3,9 @@
 $root = Split-Path -Parent $PSScriptRoot
 $reportPath = Join-Path $root "reports\api-testing-report.tsv"
 
-& (Join-Path $root "scripts\build.ps1")
-$tools = Get-JavaTools
-$classes = Join-Path $root "out\classes"
-$server = Start-DateTimeCheckerServerForDemo -Java $tools.Java -Classes $classes -Root $root
+# Start the server using the shared helper script
+& (Join-Path $root "scripts\start-server.ps1")
+$serverUrl = "http://localhost:4173"
 
 $testCases = @(
     @{ Id = "API01"; Name = "Valid date"; Day = "30"; Month = "5"; Year = "2026"; ExpectedValid = $true },
@@ -35,7 +34,7 @@ try {
 
         $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
         $response = Invoke-WebRequest -Method Post `
-            -Uri "$($server.Url)/api/datetime/check" `
+            -Uri "$serverUrl/api/datetime/check" `
             -ContentType "application/json; charset=utf-8" `
             -Body $body `
             -UseBasicParsing `
@@ -69,9 +68,6 @@ try {
 
     Write-Output "All $($testCases.Count) API tests passed."
 } finally {
-    if ($server.Started -and $server.Process) {
-        Stop-Process -Id $server.Process.Id -Force -ErrorAction SilentlyContinue
-        $server.Process.Dispose()
-    }
+    & (Join-Path $root "scripts\stop-server.ps1")
 }
 [System.Environment]::Exit(0)

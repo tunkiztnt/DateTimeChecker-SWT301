@@ -1,6 +1,0 @@
-[
-  {"id": "AI01", "name": "Kiá»ƒm thá»­ ngÃ y thÆ°á»ng há»£p lá»‡", "day": "30", "month": "5", "year": "2026", "expectedValid": true},
-  {"id": "AI02", "name": "Kiá»ƒm thá»­ ngÃ y vÆ°á»£t biÃªn cá»§a ThÃ¡ng 4", "day": "31", "month": "4", "year": "2026", "expectedValid": false},
-  {"id": "AI03", "name": "Kiá»ƒm thá»­ ngÃ y nhuáº­n há»£p lá»‡", "day": "29", "month": "2", "year": "2024", "expectedValid": true},
-  {"id": "AI04", "name": "Kiá»ƒm thá»­ ngÃ y nhuáº­n nÄƒm thÆ°á»ng", "day": "29", "month": "2", "year": "2025", "expectedValid": false}
-]

@@ -32,7 +32,7 @@ echo.
 echo ============================================================
 echo  3. TOPIC 3 - WEB E2E TESTING (KIEM THU DAU-CUOI WEB)
 echo ============================================================
-call npx playwright test --config="%~dp0playwright.config.js" --grep="@e2e"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\selenium-demo.ps1" -AutoClose
 echo.
 
 echo ============================================================

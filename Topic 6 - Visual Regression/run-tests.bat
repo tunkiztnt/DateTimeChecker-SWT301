@@ -3,11 +3,11 @@ chcp 65001 > nul
 title Topic 6 - Visual Regression Testing
 
 echo ============================================================
-echo  COMPILING JAVA CODE
+echo  STARTING APPLICATION SERVER
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\build.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\start-server.ps1"
 if errorlevel 1 (
-  echo [ERROR] Biên dịch mã nguồn thất bại!
+  echo [ERROR] Không thể khởi động server!
   goto end
 )
 
@@ -16,7 +16,7 @@ echo ============================================================
 echo  RUNNING VISUAL REGRESSION CHECKS (PLAYWRIGHT SHOTS)
 echo ============================================================
 
-if not exist "%~dp0playwright-visual\visual.spec.js-snapshots" goto update_snapshots
+if not exist "%~dp0visual\visual.spec.js-snapshots" goto update_snapshots
 echo [INFO] Đang so sánh giao diện với ảnh gốc...
 pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@visual"
@@ -31,8 +31,15 @@ call npx playwright test --config=playwright.config.js --grep="@visual" --update
 popd
 
 :check_status
+set TEST_STATUS=%ERRORLEVEL%
 
-if errorlevel 1 (
+echo.
+echo ============================================================
+echo  STOPPING APPLICATION SERVER
+echo ============================================================
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\stop-server.ps1"
+
+if %TEST_STATUS% neq 0 (
   echo.
   echo [ERROR] Visual Regression tests failed!
   echo Nếu bạn có thay đổi giao diện cố ý, hãy chạy lệnh sau từ thư mục gốc để cập nhật ảnh gốc:

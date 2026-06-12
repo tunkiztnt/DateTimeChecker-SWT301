@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+out/
+*.class
+
+# Testing outputs and caches
+test-results/
+reports/
+.playwright/
+
+# Playwright Visual Regression Testing (Topic 6)
+# Keep baseline screenshots (*.png) but ignore test diffs and actual outputs
+**/__snapshots__/*-diff.png
+**/__snapshots__/*-actual.png

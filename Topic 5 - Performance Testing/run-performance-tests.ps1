@@ -1,29 +1,29 @@
-. (Join-Path $PSScriptRoot "..\scripts\common.ps1")
-
 $root = Split-Path -Parent $PSScriptRoot
-& (Join-Path $root "scripts\build.ps1")
-$tools = Get-JavaTools
-$classes = Join-Path $root "out\classes"
 
-Write-Output "Starting application server for performance testing..."
-$server = Start-DateTimeCheckerServerForDemo -Java $tools.Java -Classes $classes -Root $root
+# 1. Call start-server.ps1 first (from scripts/)
+& (Join-Path $root "scripts\start-server.ps1")
+
+$perfTestStatus = 0
 
 try {
-    $hasK6 = Get-Command "k6" -ErrorAction SilentlyContinue
-    $env:DATETIMECHECKER_URL = $server.Url
-    if ($hasK6) {
-        Write-Output "k6 is installed. Running k6 load test..."
-        & k6 run (Join-Path $PSScriptRoot "k6\load-test.js")
-    } else {
-        Write-Output "k6 not found in PATH. Running fallback Node.js Autocannon benchmark..."
-        Set-Location -LiteralPath $root
-        & npm run test:perf
-    }
+    # 2. Run autocannon-test.js
+    $testScript = Join-Path $PSScriptRoot "benchmark\autocannon-test.js"
+    Write-Output "Running autocannon-test.js..."
+    node $testScript
+    $perfTestStatus = $LASTEXITCODE
 } finally {
-    if ($server.Started -and $server.Process) {
-        Write-Output "Stopping application server..."
-        Stop-Process -Id $server.Process.Id -Force -ErrorAction SilentlyContinue
-        $server.Process.Dispose()
+    # 3. Print the contents of the report file
+    $reportFile = Join-Path $root "reports\performance-report.txt"
+    if (Test-Path $reportFile) {
+        Write-Output "`n[PERFORMANCE REPORT CONTENTS]"
+        Get-Content $reportFile
+    } else {
+        Write-Output "`n[WARNING] Performance report file not found at $reportFile"
     }
+
+    # 4. Call stop-server.ps1
+    & (Join-Path $root "scripts\stop-server.ps1")
 }
-[System.Environment]::Exit(0)
+
+# Exit with status code of autocannon test run
+[System.Environment]::Exit($perfTestStatus)

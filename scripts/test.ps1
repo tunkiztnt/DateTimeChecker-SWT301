@@ -11,7 +11,7 @@ $tools = Get-JavaTools
 $classPath = "$PSScriptRoot\..\out\classes"
 
 Write-Host "Running Java backend unit tests..." -ForegroundColor Green
-& $tools.Java -cp $classPath com.datetimechecker.DateTimeValidationServiceTest
+& $tools.Java -cp "$classPath;$PSScriptRoot\..\lib\junit-platform-console-standalone-1.10.2.jar" com.datetimechecker.DateTimeValidationServiceTest
 
 $exitCode = $LASTEXITCODE
 if ($exitCode -ne 0) {

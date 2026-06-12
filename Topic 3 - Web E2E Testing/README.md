@@ -9,7 +9,7 @@ Thư mục này chứa các kịch bản kiểm thử tự động hóa trên tr
 ### A. Playwright Web E2E (Khuyên dùng và được gắn sao trong sơ đồ)
 - **Mục tiêu**: Tự động mở trình duyệt Chromium, điền các giá trị kiểm thử vào Form, nhấn Kiểm tra và xác nhận các phần tử hiển thị (kết quả hợp lệ/không hợp lệ, lỗi cụ thể, đổi giao diện tối/sáng).
 - **Tập tin liên quan**:
-  - Mã nguồn kiểm thử: [e2e.spec.js](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%203%20-%20Web%20E2E%20Testing/playwright-e2e/e2e.spec.js)
+  - Mã nguồn kiểm thử: [web-e2e.spec.js](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker/Topic%203%20-%20Web%20E2E%20Testing/e2e/web-e2e.spec.js)
 
 ### B. Selenium WebDriver (Java)
 - **Mục tiêu**: Demo kiểm thử trực quan bằng Selenium WebDriver trên Microsoft Edge, hiển thị các hộp thoại kết quả giữa màn hình và dừng lại sau khi hoàn thành.

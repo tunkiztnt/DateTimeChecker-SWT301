@@ -19,4 +19,7 @@ Start-Process "http://localhost:4173"
 
 # Run the server in foreground
 $classPath = "$PSScriptRoot\..\out\classes"
+Stop-RunningServer
+$repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
+Set-Location -Path $repoRoot
 & $tools.Java -cp $classPath com.datetimechecker.App

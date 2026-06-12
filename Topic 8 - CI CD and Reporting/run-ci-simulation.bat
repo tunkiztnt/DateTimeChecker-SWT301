@@ -2,188 +2,198 @@
 chcp 65001 > nul
 title Local CI/CD Pipeline Simulator
 
-echo ============================================================
-echo  LOCAL CI/CD PIPELINE SIMULATION RUNNER
-echo ============================================================
-echo [INFO] Pipeline started at: %DATE% %TIME%
+SET PASSED=0
+SET FAILED=0
+SET SKIPPED=0
+
+echo ╔══════════════════════════════════════════════════╗
+echo ║     LOCAL CI/CD PIPELINE — DateTimeChecker       ║
+echo ║     Started: %DATE% %TIME%                         ║
+echo ╚══════════════════════════════════════════════════╝
 echo.
 
-set REPORT_FILE="%~dp0..\reports\ci-pipeline-report.txt"
-
-if not exist "%~dp0..\reports" (
-  mkdir "%~dp0..\reports"
-)
-
-echo CI/CD Pipeline Execution Report > %REPORT_FILE%
-echo =============================== >> %REPORT_FILE%
-echo Executed: %DATE% %TIME% >> %REPORT_FILE%
-echo. >> %REPORT_FILE%
-
-set STAGE_1=PASS
-set STAGE_2=PASS
-set STAGE_3=PASS
-set STAGE_4=PASS
-set STAGE_5=PASS
-set STAGE_6=PASS
-set STAGE_7=PASS
-
-:: STAGE 1: Compilation
-echo ------------------------------------------------------------
-echo  STAGE 1: CODE COMPILATION (BUILD STAGE)
-echo ------------------------------------------------------------
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\build.ps1"
-if errorlevel 1 (
-  set STAGE_1=FAIL
-  echo [STAGE 1] Build failed! >> %REPORT_FILE%
-  goto summary
-)
-echo [STAGE 1] Build: SUCCESS >> %REPORT_FILE%
-echo.
-
-:: STAGE 2: Unit Testing
-echo ------------------------------------------------------------
-echo  STAGE 2: UNIT TESTING (JAVA AND JAVASCRIPT)
-echo ------------------------------------------------------------
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\test.ps1"
-if errorlevel 1 (
-  set STAGE_2=FAIL
-)
-call npm run test:unit
-if errorlevel 1 (
-  set STAGE_2=FAIL
-)
-if "%STAGE_2%"=="FAIL" (
-  echo [STAGE 2] Unit tests failed! >> %REPORT_FILE%
+:: STAGE 1: Code Compilation
+if %FAILED% GTR 0 (
+  echo [STAGE 1/8] Skipped: Build Java Compilation
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 2] Unit tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 1/8] Running: Build Java Compilation...
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\build.ps1"
+  if errorlevel 1 (
+    echo [FAIL] Stage 1 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 1 completed
+    SET /A PASSED+=1
+  )
+)
+echo.
+
+:: STAGE 2: Unit Testing (Java and JavaScript)
+if %FAILED% GTR 0 (
+  echo [STAGE 2/8] Skipped: Unit Testing (Java and JavaScript)
+  SET /A SKIPPED+=1
+) else (
+  echo [STAGE 2/8] Running: Unit Testing (Java and JavaScript)...
+  SET STAGE_FAILED=0
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\test.ps1"
+  if errorlevel 1 SET STAGE_FAILED=1
+  call npm run test:unit
+  if errorlevel 1 SET STAGE_FAILED=1
+  
+  if %STAGE_FAILED% EQU 1 (
+    echo [FAIL] Stage 2 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 2 completed
+    SET /A PASSED+=1
+  )
 )
 echo.
 
 :: STAGE 3: API Testing
-echo ------------------------------------------------------------
-echo  STAGE 3: API VALIDATION (PLAYWRIGHT AND POWERSHELL)
-echo ------------------------------------------------------------
-pushd "%~dp0.."
-call npx playwright test --config=playwright.config.js --grep="@api"
-popd
-if errorlevel 1 (
-  set STAGE_3=FAIL
-)
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 2 - API Testing\run-api-testing.ps1"
-if errorlevel 1 (
-  set STAGE_3=FAIL
-)
-if "%STAGE_3%"=="FAIL" (
-  echo [STAGE 3] API tests failed! >> %REPORT_FILE%
+if %FAILED% GTR 0 (
+  echo [STAGE 3/8] Skipped: API Validation
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 3] API tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 3/8] Running: API Validation...
+  SET STAGE_FAILED=0
+  pushd "%~dp0.."
+  call npx playwright test --config=playwright.config.js --grep="@api"
+  if errorlevel 1 SET STAGE_FAILED=1
+  popd
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 2 - API Testing\run-api-testing.ps1"
+  if errorlevel 1 SET STAGE_FAILED=1
+  
+  if %STAGE_FAILED% EQU 1 (
+    echo [FAIL] Stage 3 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 3 completed
+    SET /A PASSED+=1
+  )
 )
+:: Kill server after Stage 3 (API) using the requested netstat loop
+FOR /F "tokens=5" %%P IN ('netstat -a -n -o ^| findstr ":4173"') DO taskkill /PID %%P /F 2>nul
 echo.
 
-:: STAGE 4: Web E2E Testing
-echo ------------------------------------------------------------
-echo  STAGE 4: WEB E2E AUTOMATION (PLAYWRIGHT BROWSER)
-echo ------------------------------------------------------------
-pushd "%~dp0.."
-call npx playwright test --config=playwright.config.js --grep="@e2e"
-popd
-if errorlevel 1 (
-  set STAGE_4=FAIL
-)
-if "%STAGE_4%"=="FAIL" (
-  echo [STAGE 4] Web E2E tests failed! >> %REPORT_FILE%
+:: STAGE 4: Web E2E Browser Testing
+if %FAILED% GTR 0 (
+  echo [STAGE 4/8] Skipped: Web E2E Browser Testing
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 4] Web E2E tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 4/8] Running: Web E2E Browser Testing...
+  SET STAGE_FAILED=0
+  pushd "%~dp0.."
+  call npm run test:e2e
+  if errorlevel 1 SET STAGE_FAILED=1
+  popd
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\selenium-demo.ps1" -AutoClose -Headless
+  if errorlevel 1 SET STAGE_FAILED=1
+  
+  if %STAGE_FAILED% EQU 1 (
+    echo [FAIL] Stage 4 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 4 completed
+    SET /A PASSED+=1
+  )
 )
+:: Kill server after Stage 4 (E2E) using the requested netstat loop
+FOR /F "tokens=5" %%P IN ('netstat -a -n -o ^| findstr ":4173"') DO taskkill /PID %%P /F 2>nul
 echo.
 
 :: STAGE 5: Mobile Testing Fallback Simulation
-echo ------------------------------------------------------------
-echo  STAGE 5: MOBILE AUTOMATION (SIMULATOR/EMULATOR RUN)
-echo ------------------------------------------------------------
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 4 - Mobile Testing\run-mobile-testing.ps1"
-if errorlevel 1 (
-  set STAGE_5=FAIL
-)
-if "%STAGE_5%"=="FAIL" (
-  echo [STAGE 5] Mobile tests failed! >> %REPORT_FILE%
+if %FAILED% GTR 0 (
+  echo [STAGE 5/8] Skipped: Mobile Testing
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 5] Mobile tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 5/8] Running: Mobile Testing...
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 4 - Mobile Testing\run-mobile-testing.ps1"
+  if errorlevel 1 (
+    echo [FAIL] Stage 5 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 5 completed
+    SET /A PASSED+=1
+  )
 )
 echo.
 
 :: STAGE 6: Performance Testing
-echo ------------------------------------------------------------
-echo  STAGE 6: PERFORMANCE AND LATENCY LOAD TESTING
-echo ------------------------------------------------------------
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 5 - Performance Testing\run-performance-tests.ps1"
-if errorlevel 1 (
-  set STAGE_6=FAIL
-)
-if "%STAGE_6%"=="FAIL" (
-  echo [STAGE 6] Performance tests failed! >> %REPORT_FILE%
+if %FAILED% GTR 0 (
+  echo [STAGE 6/8] Skipped: Performance Testing
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 6] Performance tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 6/8] Running: Performance Testing...
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Topic 5 - Performance Testing\run-performance-tests.ps1"
+  if errorlevel 1 (
+    echo [FAIL] Stage 6 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 6 completed
+    SET /A PASSED+=1
+  )
 )
 echo.
 
 :: STAGE 7: Visual Regression Testing
-echo ------------------------------------------------------------
-echo  STAGE 7: VISUAL PIXEL-PERFECT CHECK (PLAYWRIGHT SHOTS)
-echo ------------------------------------------------------------
-pushd "%~dp0.."
-call npx playwright test --config=playwright.config.js --grep="@visual"
-popd
-if errorlevel 1 (
-  set STAGE_7=FAIL
-)
-if "%STAGE_7%"=="FAIL" (
-  echo [STAGE 7] Visual regression tests failed! >> %REPORT_FILE%
+if %FAILED% GTR 0 (
+  echo [STAGE 7/8] Skipped: Visual Regression Testing
+  SET /A SKIPPED+=1
 ) else (
-  echo [STAGE 7] Visual regression tests: SUCCESS >> %REPORT_FILE%
+  echo [STAGE 7/8] Running: Visual Regression Testing...
+  pushd "%~dp0.."
+  call npx playwright test --config=playwright.config.js --grep="@visual"
+  if errorlevel 1 (
+    echo [FAIL] Stage 7 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 7 completed
+    SET /A PASSED+=1
+  )
+  popd
+)
+:: Kill server after Stage 7 (Visual) using the requested netstat loop
+FOR /F "tokens=5" %%P IN ('netstat -a -n -o ^| findstr ":4173"') DO taskkill /PID %%P /F 2>nul
+echo.
+
+:: STAGE 8: AI-Assisted Testing
+if %FAILED% GTR 0 (
+  echo [STAGE 8/8] Skipped: AI-Assisted Testing
+  SET /A SKIPPED+=1
+) else (
+  echo [STAGE 8/8] Running: AI-Assisted Testing...
+  call powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\ai-self-healing-demo.ps1" -OfflineSample -AutoApprove
+  if errorlevel 1 (
+    echo [FAIL] Stage 8 failed
+    SET /A FAILED+=1
+  ) else (
+    echo [PASS] Stage 8 completed
+    SET /A PASSED+=1
+  )
 )
 echo.
 
-:summary
-echo ============================================================
-echo  CI/CD PIPELINE INTEGRATION RUN SUMMARY
-echo ============================================================
-echo Stage 1: Build Java Compilation        - %STAGE_1%
-echo Stage 2: Unit Testing (Backend and UI)   - %STAGE_2%
-echo Stage 3: API Validation                - %STAGE_3%
-echo Stage 4: Web E2E Browser Testing       - %STAGE_4%
-echo Stage 5: Mobile Testing (Maestro/Mock) - %STAGE_5%
-echo Stage 6: Performance Latency Bench     - %STAGE_6%
-echo Stage 7: Visual Regression Screenshots  - %STAGE_7%
-echo ============================================================
+:: Set overall status
+if %FAILED% EQU 0 (
+  SET OVERALL=SUCCESS
+) else (
+  SET OVERALL=FAILED
+)
 
-echo Summary: >> %REPORT_FILE%
-echo ----------------------- >> %REPORT_FILE%
-echo Stage 1: Build Java Compilation        - %STAGE_1% >> %REPORT_FILE%
-echo Stage 2: Unit Testing (Backend and UI)   - %STAGE_2% >> %REPORT_FILE%
-echo Stage 3: API Validation                - %STAGE_3% >> %REPORT_FILE%
-echo Stage 4: Web E2E Browser Testing       - %STAGE_4% >> %REPORT_FILE%
-echo Stage 5: Mobile Testing (Maestro/Mock) - %STAGE_5% >> %REPORT_FILE%
-echo Stage 6: Performance Latency Bench     - %STAGE_6% >> %REPORT_FILE%
-echo Stage 7: Visual Regression Screenshots  - %STAGE_7% >> %REPORT_FILE%
-echo ----------------------- >> %REPORT_FILE%
+echo ══════════════════════════════════════════
+echo PIPELINE SUMMARY
+echo ══════════════════════════════════════════
+echo ✓ PASSED:  %PASSED% stages
+echo ✗ FAILED:  %FAILED% stages
+echo ○ SKIPPED: %SKIPPED% stages
+echo ══════════════════════════════════════════
+echo OVERALL: %OVERALL% — Ended: %DATE% %TIME%
+echo ══════════════════════════════════════════
 
-if "%STAGE_1%"=="FAIL" goto fail
-if "%STAGE_2%"=="FAIL" goto fail
-if "%STAGE_3%"=="FAIL" goto fail
-if "%STAGE_4%"=="FAIL" goto fail
-if "%STAGE_5%"=="FAIL" goto fail
-if "%STAGE_6%"=="FAIL" goto fail
-if "%STAGE_7%"=="FAIL" goto fail
-
-echo [SUCCESS] PIPELINE PASSED SUCCESSFULLY!
-echo Final Verdict: PASS >> %REPORT_FILE%
-goto end
-
-:fail
-echo [ERROR] PIPELINE COMPLETED WITH FAILURES. Check logs above.
-echo Final Verdict: FAIL >> %REPORT_FILE%
-
-:end
-echo Integration report compiled: reports/ci-pipeline-report.txt
-echo.
+if %FAILED% NEQ 0 (
+  exit /b 1
+) else (
+  exit /b 0
+)

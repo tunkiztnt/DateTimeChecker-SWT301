@@ -26,7 +26,8 @@ if ($javaFiles.Count -eq 0) {
 }
 
 # Compile command
-& $tools.Javac -encoding UTF-8 -d $outDir $javaFiles
+$classpath = "$PSScriptRoot\..\lib\junit-platform-console-standalone-1.10.2.jar"
+& $tools.Javac -encoding UTF-8 -cp $classpath -d $outDir $javaFiles
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] Compilation failed with exit code $LASTEXITCODE" -ForegroundColor Red

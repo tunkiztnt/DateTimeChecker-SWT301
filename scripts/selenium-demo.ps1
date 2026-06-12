@@ -1,3 +1,8 @@
+param(
+    [switch]$AutoClose,
+    [switch]$Headless
+)
+
 . "$PSScriptRoot\common.ps1"
 
 # 1. Setup Directories
@@ -42,19 +47,45 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# 4. Start Java Server on port 4173 in the background
-Write-Host "Starting local DateTimeChecker server in the background..." -ForegroundColor Yellow
-$serverProcess = Start-Process -FilePath $tools.Java -ArgumentList "-cp", "$outDir", "com.datetimechecker.App" -PassThru -NoNewWindow
-
-# Wait for server to boot up
-Start-Sleep -Seconds 2
-
-# 5. Run Selenium visible demo
-Write-Host "Running Selenium E2E Automation Demo (Edge browser will open)..." -ForegroundColor Green
+# 4. Check if server is already running on port 4173
+$isPortActive = $false
+$tcp = $null
 try {
-    & $tools.Java -cp "$outDir;$seleniumJar" "-Ddatetimechecker.url=http://localhost:4173" com.datetimechecker.SeleniumVisibleDemo
+    $tcp = New-Object System.Net.Sockets.TcpClient
+    $tcp.Connect("127.0.0.1", 4173)
+    $isPortActive = $true
+} catch {
 } finally {
-    # 6. Tear down background server
-    Write-Host "Stopping background server..." -ForegroundColor Yellow
-    Stop-Process -Id $serverProcess.Id -Force -ErrorAction SilentlyContinue
+    if ($null -ne $tcp) { $tcp.Close() }
+}
+
+$serverProcess = $null
+if (-not $isPortActive) {
+    Stop-RunningServer
+    Write-Host "Starting local DateTimeChecker server in the background..." -ForegroundColor Yellow
+    $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
+    $serverProcess = Start-Process -FilePath $tools.Java -ArgumentList "-cp", "$outDir", "com.datetimechecker.App" -WorkingDirectory $repoRoot -PassThru -NoNewWindow
+    # Wait for server to boot up
+    Start-Sleep -Seconds 2
+} else {
+    Write-Host "Server is already running on port 4173. Reusing it." -ForegroundColor Green
+}
+
+# 5. Run Selenium E2E Automation
+Write-Host "Running Selenium E2E Automation..." -ForegroundColor Green
+$appArgs = @()
+if ($AutoClose) {
+    $appArgs += "--auto-close"
+}
+if ($Headless) {
+    $appArgs += "--headless"
+}
+try {
+    & $tools.Java -cp "$outDir;$seleniumJar" "-Ddatetimechecker.url=http://localhost:4173" com.datetimechecker.SeleniumVisibleDemo $appArgs
+} finally {
+    # 6. Tear down background server if we started it
+    if ($null -ne $serverProcess) {
+        Write-Host "Stopping background server..." -ForegroundColor Yellow
+        Stop-Process -Id $serverProcess.Id -Force -ErrorAction SilentlyContinue
+    }
 }
