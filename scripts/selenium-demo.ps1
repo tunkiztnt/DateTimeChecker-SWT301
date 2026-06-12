@@ -64,7 +64,8 @@ if (-not $isPortActive) {
     Stop-RunningServer
     Write-Host "Starting local DateTimeChecker server in the background..." -ForegroundColor Yellow
     $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
-    $serverProcess = Start-Process -FilePath $tools.Java -ArgumentList "-cp", "$outDir", "com.datetimechecker.App" -WorkingDirectory $repoRoot -PassThru -NoNewWindow
+    $serverClassPath = (Resolve-Path $outDir).Path
+    $serverProcess = Start-Process -FilePath $tools.Java -ArgumentList @("-cp", "`"$serverClassPath`"", "com.datetimechecker.App") -WorkingDirectory $repoRoot -PassThru -NoNewWindow
     # Wait for server to boot up
     Start-Sleep -Seconds 2
 } else {

@@ -23,6 +23,7 @@ $testCases = @(
 $rows = New-Object System.Collections.Generic.List[string]
 $rows.Add("id`tname`tinput`texpected_valid`tactual_valid`tstatus_code`telapsed_ms`tresult")
 $failures = New-Object System.Collections.Generic.List[string]
+$exitCode = 0
 
 try {
     Write-Output ""
@@ -41,27 +42,41 @@ try {
         } | ConvertTo-Json
 
         $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
-        $response = Invoke-WebRequest -Method Post `
-            -Uri "$serverUrl/api/datetime/check" `
-            -ContentType "application/json; charset=utf-8" `
-            -Body $body `
-            -UseBasicParsing `
-            -TimeoutSec 5
-        $elapsed.Stop()
-
-        $json = $response.Content | ConvertFrom-Json
-        $passed = ($response.StatusCode -eq 200) -and ($json.valid -eq $testCase.ExpectedValid) -and ($elapsed.ElapsedMilliseconds -le 1000)
-        $result = if ($passed) { "PASS" } else { "FAIL" }
         $input = "$($testCase.Day)/$($testCase.Month)/$($testCase.Year)"
+        $response = $null
+        $json = $null
+        $errorMessage = ""
+
+        try {
+            $response = Invoke-WebRequest -Method Post `
+                -Uri "$serverUrl/api/datetime/check" `
+                -ContentType "application/json; charset=utf-8" `
+                -Body $body `
+                -UseBasicParsing `
+                -TimeoutSec 5
+            $json = $response.Content | ConvertFrom-Json
+        } catch {
+            $errorMessage = $_.Exception.Message
+        } finally {
+            $elapsed.Stop()
+        }
+
+        $statusCode = if ($response) { $response.StatusCode } else { "NO_RESPONSE" }
+        $actualValid = if ($json) { $json.valid } else { "N/A" }
+        $passed = ($response -ne $null) -and ($response.StatusCode -eq 200) -and ($json.valid -eq $testCase.ExpectedValid) -and ($elapsed.ElapsedMilliseconds -le 1000)
+        $result = if ($passed) { "PASS" } else { "FAIL" }
 
         Write-Output "------------------------------------------------------------"
         Write-Output "[$($testCase.Id)] $($testCase.Name)"
         Write-Output "  Request : POST /api/datetime/check"
         Write-Output "  JSON    : $($body -replace '\s+', ' ')"
         Write-Output "  Expected: HTTP 200, valid=$($testCase.ExpectedValid), time<=1000ms"
-        Write-Output "  Actual  : HTTP $($response.StatusCode), valid=$($json.valid), time=$($elapsed.ElapsedMilliseconds)ms"
+        Write-Output "  Actual  : HTTP $statusCode, valid=$actualValid, time=$($elapsed.ElapsedMilliseconds)ms"
+        if ($errorMessage) {
+            Write-Output "  Error   : $errorMessage"
+        }
         Write-Output "  Result  : $result"
-        $rows.Add("$($testCase.Id)`t$($testCase.Name)`t$input`t$($testCase.ExpectedValid)`t$($json.valid)`t$($response.StatusCode)`t$($elapsed.ElapsedMilliseconds)`t$result")
+        $rows.Add("$($testCase.Id)`t$($testCase.Name)`t$input`t$($testCase.ExpectedValid)`t$actualValid`t$statusCode`t$($elapsed.ElapsedMilliseconds)`t$result")
 
         if (-not $passed) {
             $failures.Add($testCase.Id)
@@ -81,7 +96,11 @@ try {
     }
 
     Write-Output "All $($testCases.Count) API tests passed."
+} catch {
+    $exitCode = 1
+    Write-Output ""
+    Write-Output "[ERROR] API testing failed: $($_.Exception.Message)"
 } finally {
     & (Join-Path $root "scripts\stop-server.ps1")
 }
-[System.Environment]::Exit(0)
+[System.Environment]::Exit($exitCode)

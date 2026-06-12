@@ -19,12 +19,17 @@ if ($netstat) {
 # Compile Java source
 Write-Host "Compiling Java source files..."
 & "$PSScriptRoot\build.ps1"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] Compilation failed. Server will not start." -ForegroundColor Red
+    exit 1
+}
 
 # Find Java tools and start server
 $tools = Get-JavaTools
 Write-Host "Starting Java server..."
 $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
-$proc = Start-Process -FilePath $tools.Java -ArgumentList "-cp", "$PSScriptRoot\..\out\classes", "com.datetimechecker.App" -WorkingDirectory $repoRoot -PassThru -WindowStyle Hidden
+$classPath = (Resolve-Path "$PSScriptRoot\..\out\classes").Path
+$proc = Start-Process -FilePath $tools.Java -ArgumentList @("-cp", "`"$classPath`"", "com.datetimechecker.App") -WorkingDirectory $repoRoot -PassThru -WindowStyle Hidden
 $global:SERVER_PID = $proc.Id
 
 # Wait until the server is ready by polling
@@ -49,7 +54,12 @@ for ($i = 0; $i -lt 15; $i++) {
 if ($ready) {
     Write-Host "[SERVER READY] Port 4173 is listening"
 } else {
-    Write-Host "[WARNING] Server did not respond within timeout"
+    Write-Host "[ERROR] Server did not respond within timeout" -ForegroundColor Red
+    if ($global:SERVER_PID) {
+        taskkill /PID $global:SERVER_PID /F 2>$null
+        $global:SERVER_PID = $null
+    }
+    exit 1
 }
 
 return $global:SERVER_PID
