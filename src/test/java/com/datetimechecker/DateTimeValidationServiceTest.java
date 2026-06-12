@@ -155,7 +155,7 @@ public final class DateTimeValidationServiceTest {
 
         System.out.println();
         if (FAILURES.isEmpty()) {
-            System.out.println("All 7 Java tests passed.");
+            System.out.println("All Java validation tests passed.");
             return;
         }
 
@@ -172,7 +172,9 @@ public final class DateTimeValidationServiceTest {
             String month,
             String year) {
         DateTimeCheckResult result = VALIDATOR.validate(new DateTimeCheckRequest(day, month, year));
-        System.out.println("  -> Input: [Day='" + day + "', Month='" + month + "', Year='" + year + "'] | Result: valid=" + result.valid + ", errors=" + result.errors);
+        System.out.println("  -> Input: [Day='" + day + "', Month='" + month + "', Year='" + year
+                + "'] | Result: " + result.result + ", valid=" + result.valid
+                + ", errorCount=" + result.errors.size());
         return result;
     }
 

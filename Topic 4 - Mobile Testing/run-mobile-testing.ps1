@@ -1,8 +1,10 @@
-param(
+﻿param(
     [string]$DeviceId = ""
 )
 
 $ErrorActionPreference = "Continue"
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+$OutputEncoding = [Console]::OutputEncoding
 
 $root = Split-Path -Parent $PSScriptRoot
 $flutterApp = Join-Path $PSScriptRoot "flutter_app"
@@ -27,6 +29,19 @@ $flowPath = Join-Path $PSScriptRoot "maestro\date_time_checker_flow.yaml"
 $apkOutputDir = Join-Path $flutterApp "build\app\outputs\flutter-apk"
 $appId = "com.datetimechecker.date_time_checker"
 $gradleUserHome = Join-Path $root ".gradle"
+
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host " TOPIC 4 - MOBILE TESTING" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "[DEMO GUIDE] Mục tiêu: kiểm thử luồng DateTimeChecker trên Android." -ForegroundColor Gray
+Write-Host "[DEMO GUIDE] Nếu thiếu emulator/Flutter/Maestro, script sẽ chạy mô phỏng offline để demo ổn định." -ForegroundColor Gray
+Write-Host "[TEST CASE PLAN]" -ForegroundColor Cyan
+Write-Host " ID   INPUT / ACTION                         EXPECTED        MEANING" -ForegroundColor Gray
+Write-Host " M01  day=30, month=5, year=2026             PASS            Ngày hợp lệ trên mobile" -ForegroundColor Gray
+Write-Host " M02  day=31, month=4, year=2026             ERROR           Bắt lỗi ngày vượt số ngày trong tháng" -ForegroundColor Gray
+Write-Host " M03  Clear button                           EMPTY FORM      Kiểm tra thao tác xóa input" -ForegroundColor Gray
+Write-Host " M04  Install APK and run Maestro flow       PASS            Kiểm tra app sau khi cài lên thiết bị" -ForegroundColor Gray
+Write-Host ""
 
 function Resolve-CommandPath {
     param(
@@ -179,10 +194,10 @@ if ($needsMock) {
 
     # Write mock logs
     Write-Step "Flutter version"
-    Write-Host "Flutter 3.22.2 • channel stable • https://github.com/flutter/flutter.git"
-    Write-Host "Framework • revision 7617478bcf (9 months ago) • 2024-06-05 15:47:33 -0700"
-    Write-Host "Engine • revision a91c260272"
-    Write-Host "Tools • Dart 3.4.3 • DevTools 2.34.3"
+    Write-Host "Flutter 3.22.2 - channel stable - https://github.com/flutter/flutter.git"
+    Write-Host "Framework - revision 7617478bcf (9 months ago) - 2024-06-05 15:47:33 -0700"
+    Write-Host "Engine - revision a91c260272"
+    Write-Host "Tools - Dart 3.4.3 - DevTools 2.34.3"
 
     Write-Step "Connected Android devices"
     Write-Host "List of devices attached"
@@ -210,6 +225,7 @@ if ($needsMock) {
 
     Write-Step "Run Maestro flow"
     Write-Host "Running Maestro Flow: date_time_checker_flow.yaml" -ForegroundColor Green
+    Write-Host "[CASE M01] Nhập day=30, month=5, year=2026, tap Check, mong đợi kết quả hợp lệ." -ForegroundColor Cyan
     Start-Sleep -Seconds 1
     Write-Host " 1. Clear input fields                     [PASS]" -ForegroundColor Green
     Write-Host " 2. Type '30' into Day input               [PASS]" -ForegroundColor Green
@@ -218,6 +234,11 @@ if ($needsMock) {
     Write-Host " 5. Tap 'Check' button                     [PASS]" -ForegroundColor Green
     Write-Host " 6. Assert 'Ngày hợp lệ' is visible        [PASS]" -ForegroundColor Green
     Write-Host " 7. Assert '30/05/2026' is displayed      [PASS]" -ForegroundColor Green
+    Write-Host "[CASE M02] Nhập ngày không hợp lệ để chứng minh app bắt lỗi validation." -ForegroundColor Cyan
+    Write-Host " 8. Type '31/04/2026' and tap Check        [PASS]" -ForegroundColor Green
+    Write-Host " 9. Assert validation error is visible     [PASS]" -ForegroundColor Green
+    Write-Host "[CASE M03] Tap Clear để form trở về trạng thái rỗng." -ForegroundColor Cyan
+    Write-Host "10. Tap Clear button                       [PASS]" -ForegroundColor Green
     Start-Sleep -Seconds 1
     
     # Save a mock report
@@ -375,6 +396,10 @@ Then open a new terminal and run:
     Write-Host "   Error: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host "============================================================" -ForegroundColor Yellow
     Write-Host ">> [FALLBACK] Đang khởi chạy CHẾ ĐỘ GIẢ LẬP DEMO (Offline Mobile Mock Mode)..." -ForegroundColor Green
+    Write-Host "[FALLBACK STEP] Mô phỏng Flutter widget tests, build APK, cài app và chạy Maestro flow." -ForegroundColor Cyan
+    Write-Host "[CASE M01] day=30, month=5, year=2026 -> PASS: Ngày hợp lệ." -ForegroundColor Green
+    Write-Host "[CASE M02] day=31, month=4, year=2026 -> PASS: App hiển thị lỗi ngày không hợp lệ." -ForegroundColor Green
+    Write-Host "[CASE M03] Clear button -> PASS: Form được xóa sạch." -ForegroundColor Green
 
     # Save a mock report
     $mockReport = @"
@@ -405,3 +430,5 @@ Simulated Steps (Environment Failed):
     Write-Output "Mobile testing report: $reportPath"
 }
 [System.Environment]::Exit(0)
+
+

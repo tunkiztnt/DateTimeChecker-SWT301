@@ -106,7 +106,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
+  padding: 12px 24px;
   background-color: rgba(0, 0, 0, 0.03);
   border-bottom: 1px solid var(--border-card);
 }
@@ -117,7 +117,11 @@ body {
 }
 
 .fu-logo {
-  height: 28px;
+  display: block;
+  height: 58px;
+  max-width: 330px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header-right {

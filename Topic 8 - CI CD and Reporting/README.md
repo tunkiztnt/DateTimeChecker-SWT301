@@ -1,42 +1,57 @@
-# Topic 8: CI/CD & Reporting - Tích hợp Liên tục và Báo cáo Kết quả (Local Automation)
+# Topic 8: CI/CD & Reporting - Tích hợp liên tục và báo cáo
 
-Thư mục này chứa kịch bản mô phỏng tích hợp liên tục (CI/CD) cục bộ và tài liệu hướng dẫn về báo cáo kết quả kiểm thử tự động trên máy trạm của bạn.
+## Dùng để làm gì?
 
----
+CI/CD & Reporting mô phỏng pipeline kiểm thử tự động cục bộ cho DateTimeChecker. Topic này gom nhiều tầng test vào một luồng để chứng minh code có thể được build, test và tổng hợp kết quả theo quy trình gần giống dự án thực tế.
 
-## 1. Trình mô phỏng tích hợp liên tục cục bộ (Local CI/CD Pipeline Simulator)
+## Vai trò và ý nghĩa
 
-Để giữ cho dự án hoàn toàn cục bộ (không cần đẩy code lên máy chủ đám mây hoặc liên kết với GitHub), chúng tôi đã thiết lập tập tin kịch bản tự động chạy tất cả các tầng kiểm thử nối tiếp nhau nhằm kiểm tra sự ổn định của mã nguồn trước khi tích hợp:
+- Tạo quy trình kiểm tra tự động trước khi nhóm nộp bài hoặc quay demo.
+- Gom kết quả Unit, API, Web E2E, Mobile, Performance, Visual và AI-Assisted Testing.
+- Cho thấy cách team QA báo cáo chất lượng phần mềm theo stage PASS/FAIL.
 
-- **Tập tin chạy**: [run-ci-simulation.bat](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%208%20-%20CI%20CD%20and%20Reporting/run-ci-simulation.bat)
-- **Các bước chạy trong luồng mô phỏng**:
-  1. **STAGE 1 (Build)**: Biên dịch toàn bộ mã nguồn Java của máy chủ ứng dụng.
-  2. **STAGE 2 (Unit Testing)**: Thực hiện đồng thời cả các bài kiểm thử đơn vị của mã nguồn Java (JUnit-style backend) và JavaScript helper (Jest UI).
-  3. **STAGE 3 (API Testing)**: Khởi động máy chủ tạm thời, chạy các bài kiểm thử API bằng Playwright và PowerShell.
-  4. **STAGE 4 (Web E2E)**: Chạy kịch bản kiểm thử hành vi người dùng trên giao diện web bằng trình duyệt tự động của Playwright.
-  5. **STAGE 5 (Mobile)**: Chạy kịch bản kiểm thử di động giả lập.
-  6. **STAGE 6 (Performance)**: Đo lường và đánh giá hiệu năng chịu tải phản hồi với Autocannon.
-  7. **STAGE 7 (Visual)**: Chụp ảnh màn hình giao diện thực tế và so sánh pixel-perfect với ảnh gốc (baseline) nhằm phát hiện lỗi lệch giao diện.
-  8. **Summary & Report**: Tổng hợp trạng thái PASS/FAIL của từng giai đoạn và xuất báo cáo hợp nhất.
+## Thành phần chính
 
----
+- CI simulation runner: `Topic 8 - CI CD and Reporting/run-ci-simulation.bat`
+- Root all-topic runner: `run-all-topics.bat`
+- Báo cáo API: `reports/api-testing-report.tsv`
+- Báo cáo Mobile: `reports/mobile-testing-report.txt`
+- Báo cáo Performance: `reports/performance-report.txt`
+- Playwright report: `reports/playwright-report/`
 
-## 2. Báo cáo kết quả kiểm thử (Reporting)
+## Cách chạy
 
-Tất cả các bài kiểm thử đều tự động ghi lại lịch sử và kết quả chi tiết trong thư mục `reports/` để bạn dễ dàng mở ra kiểm tra hoặc đính kèm vào báo cáo môn học:
+Chạy riêng Topic 8:
 
-1. **Báo cáo tích hợp CI/CD (Pipeline Report)**:
-   - Tập tin: [reports/ci-pipeline-report.txt](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/reports/ci-pipeline-report.txt)
-   - Chứa kết quả tổng quan trạng thái chạy của 7 giai đoạn.
-2. **Báo cáo API (PowerShell)**:
-   - Tập tin: [reports/api-testing-report.tsv](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/reports/api-testing-report.tsv)
-   - Chứa thông tin về các API endpoint, dữ liệu đầu vào, kết quả mong đợi so với thực tế và thời gian phản hồi (ms) định dạng TSV dễ dàng import vào Excel.
-3. **Báo cáo Di động (Maestro)**:
-   - Tập tin: [reports/mobile-testing-report.txt](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/reports/mobile-testing-report.txt)
-   - Chứa log chạy kịch bản Maestro và kết quả pass/fail cuối cùng.
-4. **Báo cáo Web E2E / API / Visual (Playwright HTML Report)**:
-   - Thư mục: `reports/playwright-report/`
-   - Báo cáo HTML trực quan và tương tác. Sau khi chạy thử nghiệm xong, bạn có thể xem lại kết quả dưới dạng trang web động bằng cách chạy lệnh:
-     ```powershell
-     npx playwright show-report reports/playwright-report
-     ```
+```powershell
+.\Topic 8 - CI CD and Reporting\run-ci-simulation.bat
+```
+
+Chạy toàn bộ 8 topic:
+
+```powershell
+.\run-all-topics.bat
+```
+
+## Luồng pipeline mô phỏng
+
+1. Stage 1: Build Java source.
+2. Stage 2: Unit Testing cho Java và JavaScript.
+3. Stage 3: API Testing bằng Playwright và PowerShell.
+4. Stage 4: Web E2E bằng Playwright/Selenium.
+5. Stage 5: Mobile Testing hoặc fallback simulation.
+6. Stage 6: Performance Testing bằng Autocannon.
+7. Stage 7: Visual Regression bằng Playwright screenshots.
+8. Stage 8: AI-Assisted Testing offline/self-healing demo.
+9. Summary: tổng hợp số stage PASS/FAIL/SKIPPED.
+
+## Kết quả mong đợi
+
+- CMD hiển thị từng stage đang chạy.
+- Nếu một stage fail, các stage sau có thể bị skip để mô phỏng quality gate.
+- Cuối pipeline có `PIPELINE SUMMARY`.
+- Các báo cáo chi tiết nằm trong thư mục `reports/`.
+
+## Gợi ý lời demo
+
+"Topic 8 là lớp tổng hợp. Thay vì chạy từng topic rời rạc, pipeline mô phỏng CI/CD giúp team nhìn trạng thái chất lượng toàn dự án qua từng stage và biết lỗi nằm ở tầng nào."

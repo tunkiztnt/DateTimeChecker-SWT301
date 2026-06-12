@@ -30,7 +30,7 @@ public class SeleniumVisibleDemo {
 
     public static void main(String[] args) throws Exception {
         String targetUrl = System.getProperty("datetimechecker.url", "http://localhost:4173");
-        
+
         List<TestCase> testCases = new ArrayList<>();
         testCases.add(new TestCase("TC01", "Valid normal date", "30", "5", "2026", true));
         testCases.add(new TestCase("TC02", "Leap day valid", "29", "2", "2024", true));
@@ -43,7 +43,26 @@ public class SeleniumVisibleDemo {
         testCases.add(new TestCase("TC09", "Day lower boundary", "0", "5", "2026", false));
         testCases.add(new TestCase("TC10", "Month format invalid", "30", "5.5", "2026", false));
 
+        System.out.println("============================================================");
+        System.out.println(" SELENIUM WEB E2E DEMO - DateTimeChecker");
+        System.out.println("============================================================");
+        System.out.println("[DEMO] This test opens the real web UI, types data into the form, clicks Check,");
+        System.out.println("       reads the visible result, closes the modal, and compares actual vs expected.");
+        System.out.println("[DEMO] Total browser test cases: " + testCases.size());
+        System.out.println("[TARGET] " + targetUrl);
+        System.out.println("[TEST CASE PLAN]");
+        System.out.println(" ID    NAME                         INPUT                 EXPECTED");
+        for (TestCase tc : testCases) {
+            System.out.printf(" %-5s %-28s %s/%s/%s              %s%n",
+                    tc.id,
+                    tc.name,
+                    tc.day.isEmpty() ? "<blank>" : tc.day,
+                    tc.month,
+                    tc.year,
+                    tc.expectedValid ? "VALID" : "NOT VALID");
+        }
         System.out.println("Starting Selenium WebDriver (Edge)...");
+
         EdgeOptions options = new EdgeOptions();
         for (String arg : args) {
             if ("--headless".equals(arg)) {
@@ -59,45 +78,58 @@ public class SeleniumVisibleDemo {
             Thread.sleep(1000);
 
             for (TestCase tc : testCases) {
-                System.out.println(tc.id + " RUNNING - " + tc.name);
-                
+                System.out.println("------------------------------------------------------------");
+                System.out.println("[CASE START] " + tc.id + " - " + tc.name);
+                System.out.println("[INPUT] Day='" + tc.day + "', Month='" + tc.month + "', Year='" + tc.year + "'");
+                System.out.println("[EXPECTED] " + (tc.expectedValid ? "VALID" : "NOT VALID"));
+                System.out.println("  Step 1: Locate Day, Month, Year inputs and Clear button.");
+
                 WebElement dayInput = driver.findElement(By.id("day"));
                 WebElement monthInput = driver.findElement(By.id("month"));
                 WebElement yearInput = driver.findElement(By.id("year"));
                 WebElement clearBtn = driver.findElement(By.id("clearButton"));
-                
+
+                System.out.println("  Step 2: Clear previous data.");
                 clearBtn.click();
                 Thread.sleep(200);
 
+                System.out.println("  Step 3: Type Day='" + tc.day + "'.");
                 dayInput.sendKeys(tc.day);
                 Thread.sleep(100);
+                System.out.println("  Step 4: Type Month='" + tc.month + "'.");
                 monthInput.sendKeys(tc.month);
                 Thread.sleep(100);
+                System.out.println("  Step 5: Type Year='" + tc.year + "'.");
                 yearInput.sendKeys(tc.year);
                 Thread.sleep(100);
 
                 WebElement submitBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+                System.out.println("  Step 6: Click Check and wait for API/UI result.");
                 submitBtn.click();
-                Thread.sleep(1200); // Wait for validation and display
+                Thread.sleep(1200);
 
-                // Check if WinForms popup is displayed and click OK to close it
                 try {
+                    WebElement modalMessage = driver.findElement(By.id("wfMbMessage"));
+                    System.out.println("  Step 7: Modal message: " + modalMessage.getText());
                     WebElement okBtn = driver.findElement(By.id("wfMbOkBtn"));
                     if (okBtn.isDisplayed()) {
-                        Thread.sleep(800); // Let the user see the MessageBox in the browser
+                        Thread.sleep(800);
                         okBtn.click();
-                        Thread.sleep(400); // Wait for popup to fade out
+                        Thread.sleep(400);
                     }
                 } catch (Exception e) {
-                    // No popup displayed or not clickable
+                    System.out.println("  Step 7: No modal message was displayed.");
                 }
 
                 WebElement resultTitle = driver.findElement(By.id("resultTitle"));
-                boolean isActualValid = resultTitle.getText().contains("Ngày hợp lệ");
+                WebElement detailGrid = driver.findElement(By.id("detailGrid"));
+                boolean isActualValid = !"none".equals(detailGrid.getCssValue("display"));
 
                 boolean isPass = isActualValid == tc.expectedValid;
-                System.out.println("  -> Input: [Day='" + tc.day + "', Month='" + tc.month + "', Year='" + tc.year + "']");
-                System.out.println("     Result: " + (isActualValid ? "VALID" : "INVALID") + " | Expected: " + (tc.expectedValid ? "VALID" : "INVALID"));
+                System.out.println("  Step 8: Assert visible result.");
+                System.out.println("     Result title: " + resultTitle.getText());
+                System.out.println("     Expected:     " + (tc.expectedValid ? "VALID" : "NOT VALID"));
+                System.out.println("     Actual:       " + (isActualValid ? "VALID" : "NOT VALID"));
                 if (isPass) {
                     System.out.println("     Status: PASS");
                     passed++;

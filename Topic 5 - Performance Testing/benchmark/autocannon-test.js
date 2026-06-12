@@ -8,6 +8,12 @@ function runScenario(name, options) {
     console.log(` RUNNING SCENARIO: ${name}`);
     console.log(`============================================================`);
     console.log(`Connections: ${options.connections} | Duration: ${options.duration}s`);
+    if (options.demoNote) {
+      console.log(`Demo meaning: ${options.demoNote}`);
+    }
+    if (options.thresholdText) {
+      console.log(`Pass threshold: ${options.thresholdText}`);
+    }
     
     autocannon(options, (err, result) => {
       if (err) {
@@ -27,7 +33,7 @@ async function start() {
 
   const results = [];
   
-  // SCENARIO 1 — Smoke Test (verify the server works at all):
+  // SCENARIO 1 - Smoke Test (verify the server works at all):
   // connections: 1, duration: 5 seconds
   // Target: all requests succeed (no errors)
   try {
@@ -35,6 +41,8 @@ async function start() {
       url: targetUrl,
       connections: 1,
       duration: 5,
+      demoNote: 'Verify the server and API endpoint are alive before adding load.',
+      thresholdText: '0 errors and 0 non-2xx responses.',
       requests: [
         {
           method: 'POST',
@@ -59,7 +67,7 @@ async function start() {
     results.push({ name: 'Scenario 1 (Smoke)', passed: false, requests: 0, errors: 1, p99: 0 });
   }
 
-  // SCENARIO 2 — Load Test (normal expected usage):
+  // SCENARIO 2 - Load Test (normal expected usage):
   // connections: 10, duration: 15 seconds
   // Target: p99 latency < 500ms, error rate < 1%
   try {
@@ -67,6 +75,8 @@ async function start() {
       url: targetUrl,
       connections: 10,
       duration: 15,
+      demoNote: 'Simulate normal concurrent users checking dates at the same time.',
+      thresholdText: 'p99 latency < 500ms and error rate < 1%.',
       requests: [
         {
           method: 'POST',
@@ -93,7 +103,7 @@ async function start() {
     results.push({ name: 'Scenario 2 (Load)', passed: false, requests: 0, errors: 1, p99: 0 });
   }
 
-  // SCENARIO 3 — Stress Test (find the breaking point):
+  // SCENARIO 3 - Stress Test (find the breaking point):
   // connections: 50, duration: 10 seconds
   // Target: p99 latency < 2000ms, error rate < 5%
   try {
@@ -101,6 +111,8 @@ async function start() {
       url: targetUrl,
       connections: 50,
       duration: 10,
+      demoNote: 'Push higher concurrency to see whether the API remains stable.',
+      thresholdText: 'p99 latency < 2000ms and error rate < 5%.',
       requests: [
         {
           method: 'POST',
@@ -133,7 +145,7 @@ async function start() {
   
   const reportLines = [
     '===========================================',
-    `PERFORMANCE TEST REPORT — ${timestamp}`,
+    `PERFORMANCE TEST REPORT - ${timestamp}`,
     '===========================================',
     `Scenario 1 (Smoke):    ${results[0].passed ? 'PASS' : 'FAIL'} | Requests: ${results[0].requests} | Errors: ${results[0].errors} | p99: ${results[0].p99}ms`,
     `Scenario 2 (Load):     ${results[1].passed ? 'PASS' : 'FAIL'} | Requests: ${results[1].requests} | Errors: ${results[1].errors} | p99: ${results[1].p99}ms`,

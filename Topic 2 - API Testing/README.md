@@ -1,38 +1,52 @@
-# Topic 2: API Testing - Kiểm thử Giao diện Lập trình Ứng dụng
+# Topic 2: API Testing - Kiểm thử API
 
-Thư mục này chứa các thành phần kiểm thử API cho cổng kết nối (endpoint) `POST /api/datetime/check`.
+## Dùng để làm gì?
 
----
+API Testing kiểm tra endpoint `POST /api/datetime/check` và `POST /api/check-date` của DateTimeChecker mà không cần thao tác trực tiếp trên giao diện web. Đây là tầng xác nhận dữ liệu request/response giữa frontend và backend.
 
-## 1. Các thành phần kiểm thử
+## Vai trò và ý nghĩa
 
-### A. Playwright API Testing (Khuyên dùng)
-- **Mục tiêu**: Tự động gửi các HTTP Request và xác thực dữ liệu phản hồi (Response JSON) cùng thời gian phản hồi (Response Latency < 1s).
-- **Công cụ**: Sử dụng **Playwright** API Testing runner.
-- **Tập tin liên quan**:
-  - Mã nguồn kiểm thử: [api.spec.js](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%202%20-%20API%20Testing/playwright-api/api.spec.js)
+- Đảm bảo API trả về đúng JSON cho ngày hợp lệ, ngày không hợp lệ và lỗi dữ liệu đầu vào.
+- Kiểm tra thời gian phản hồi, mã trạng thái HTTP và cấu trúc dữ liệu trả về.
+- Giúp phát hiện lỗi backend nhanh hơn Web E2E vì không phụ thuộc trình duyệt.
 
-### B. Postman Collection
-- **Mục tiêu**: Chứa bộ kiểm thử thủ công và tự động hóa qua giao diện Postman.
-- **Thư mục liên quan**: [postman/](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%202%20-%20API%20Testing/postman/)
-  - Bộ sưu tập: `DateTimeChecker API Testing.postman_collection.json`
-  - Môi trường: `DateTimeChecker API Testing.postman_environment.json`
+## Thành phần chính
 
-### C. PowerShell API Script (Legacy Integration)
-- **Mục tiêu**: Sử dụng script PowerShell tích hợp để gửi request và tự động ghi báo cáo kết quả ra tệp tin TSV.
-- **Tập tin liên quan**: [run-api-testing.ps1](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%202%20-%20API%20Testing/run-api-testing.ps1)
-- **Báo cáo xuất ra**: [reports/api-testing-report.tsv](file:///d:/DataFPTU/Semester5/SWT301/reports/api-testing-report.tsv)
+- Playwright API tests: `Topic 2 - API Testing/playwright-api/api.spec.js`
+- PowerShell integration script: `Topic 2 - API Testing/run-api-testing.ps1`
+- Postman collection: `Topic 2 - API Testing/postman/DateTimeChecker API Testing.postman_collection.json`
+- Postman environment: `Topic 2 - API Testing/postman/DateTimeChecker API Testing.postman_environment.json`
+- Script chạy demo: `Topic 2 - API Testing/run-tests.bat`
 
----
+## Cách chạy
 
-## 2. Cách chạy Demo
-
-Để chạy toàn bộ API tests (bao gồm cả Playwright API test và PowerShell script), hãy chạy tệp batch sau:
+Từ thư mục gốc dự án:
 
 ```powershell
 .\Topic 2 - API Testing\run-tests.bat
 ```
 
-Hoặc chạy các lệnh riêng lẻ:
-- Chạy Playwright API tests: `npm run test:api`
-- Chạy PowerShell API tests: `powershell -ExecutionPolicy Bypass -File ".\Topic 2 - API Testing\run-api-testing.ps1"`
+Hoặc chạy riêng:
+
+```powershell
+npm run test:api
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\Topic 2 - API Testing\run-api-testing.ps1"
+```
+
+## Luồng hoạt động khi chạy
+
+1. Biên dịch Java server.
+2. Playwright tự khởi động server test tại `http://localhost:4173`.
+3. Gửi request JSON với nhiều bộ dữ liệu ngày tháng.
+4. Xác minh `status=200`, `result=VALID/INVALID/ERROR`, `valid=true/false`, `errors`, `details`.
+5. PowerShell script ghi báo cáo TSV vào `reports/api-testing-report.tsv`.
+
+## Kết quả mong đợi
+
+- Playwright API tests pass.
+- PowerShell API tests pass 10 testcase.
+- File `reports/api-testing-report.tsv` có các cột: `id`, `name`, `input`, `expected_valid`, `actual_valid`, `status_code`, `elapsed_ms`, `result`.
+
+## Gợi ý lời demo
+
+"Topic 2 kiểm thử trực tiếp API nên có thể chứng minh backend DateTimeChecker trả JSON đúng trước khi giao diện web sử dụng dữ liệu đó."

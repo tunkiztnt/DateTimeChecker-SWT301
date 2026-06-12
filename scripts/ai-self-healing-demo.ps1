@@ -28,19 +28,19 @@ Start-Sleep -Seconds 4
 Write-Host "[AI] Generating boundary test cases..." -ForegroundColor Green
 Start-Sleep -Seconds 4
 
-Write-Host "  ✓ Generated: testLeapYear_2000_divisibleBy400_shouldBeValid()" -ForegroundColor Green
+Write-Host "  [PASS] Generated: testLeapYear_2000_divisibleBy400_shouldBeValid()" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "  ✓ Generated: testLeapYear_1900_divisibleBy100NotBy400_shouldBeInvalid()" -ForegroundColor Green
+Write-Host "  [PASS] Generated: testLeapYear_1900_divisibleBy100NotBy400_shouldBeInvalid()" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "  ✓ Generated: testBoundary_day0_shouldReturnError()" -ForegroundColor Green
+Write-Host "  [PASS] Generated: testBoundary_day0_shouldReturnError()" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "  ✓ Generated: testBoundary_day32_shouldReturnError()" -ForegroundColor Green
+Write-Host "  [PASS] Generated: testBoundary_day32_shouldReturnError()" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "  ✓ Generated: testFebruary_day30_anyYear_shouldBeInvalid()" -ForegroundColor Green
+Write-Host "  [PASS] Generated: testFebruary_day30_anyYear_shouldBeInvalid()" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
 Write-Host "[AI] 5 test cases generated. Estimated coverage increase: +12%" -ForegroundColor Green
@@ -63,13 +63,13 @@ Start-Sleep -Seconds 3
 Write-Host "[AI HEAL] Searching for similar elements by label text 'Day'..." -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "[AI HEAL] Found match: input[aria-label='Day'] — confidence: 94%" -ForegroundColor Green
+Write-Host "[AI HEAL] Found match: input[aria-label='Day'] - confidence: 94%" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
 Write-Host "[AI HEAL] Updating locator in test file..." -ForegroundColor Green
 Start-Sleep -Seconds 3
 
-Write-Host "[HEALED] Test now uses: page.getByLabel('Day') ← resilient locator" -ForegroundColor Green
+Write-Host "[HEALED] Test now uses: page.getByLabel('Day') -> resilient locator" -ForegroundColor Green
 Start-Sleep -Seconds 3
 
 Write-Host "[RESULT] Test passed after self-healing. No manual fix needed." -ForegroundColor Green
@@ -109,12 +109,13 @@ Start-Sleep -Seconds 3
 
 # Final Summary Table
 Write-Host ""
-Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║  AI-ASSISTED TESTING DEMO COMPLETE   ║" -ForegroundColor Green
-Write-Host "║  • Test Generation:   DEMONSTRATED   ║" -ForegroundColor Green
-Write-Host "║  • Self-Healing:      DEMONSTRATED   ║" -ForegroundColor Green
-Write-Host "║  • NL to Code:        DEMONSTRATED   ║" -ForegroundColor Green
-Write-Host "╚══════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "+--------------------------------------+" -ForegroundColor Green
+Write-Host "|  AI-ASSISTED TESTING DEMO COMPLETE   |" -ForegroundColor Green
+Write-Host "|  - Test Generation:   DEMONSTRATED   |" -ForegroundColor Green
+Write-Host "|  - Self-Healing:      DEMONSTRATED   |" -ForegroundColor Green
+Write-Host "|  - NL to Code:        DEMONSTRATED   |" -ForegroundColor Green
+Write-Host "+--------------------------------------+" -ForegroundColor Green
 Write-Host ""
 
 exit 0
+

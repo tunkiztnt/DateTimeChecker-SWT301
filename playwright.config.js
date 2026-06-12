@@ -12,6 +12,8 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Single-worker to prevent conflicts when starting local servers
   reporter: 'list', // Concise list reporting
+  globalSetup: require.resolve('./playwright.global-setup.js'),
+  globalTeardown: require.resolve('./playwright.global-teardown.js'),
   use: {
     baseURL: process.env.DATETIMECHECKER_URL || 'http://localhost:4173',
     trace: 'on-first-retry',
@@ -22,11 +24,4 @@ module.exports = defineConfig({
       use: { ...devices['Desktop Chrome'] },
     }
   ],
-  webServer: {
-    command: 'powershell -NoProfile -ExecutionPolicy Bypass -Command ". ./scripts/common.ps1; Stop-RunningServer; java -cp out/classes com.datetimechecker.App"',
-    url: 'http://localhost:4173',
-    reuseExistingServer: !process.env.CI,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
 });

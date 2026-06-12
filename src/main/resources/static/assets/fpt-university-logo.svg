@@ -1,0 +1,15 @@
+<svg width="460" height="84" viewBox="0 0 460 84" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">FPT University</title>
+  <desc id="desc">Official-style FPT University logo with FPT color blocks and university name.</desc>
+  <rect width="460" height="84" fill="none"/>
+  <g transform="translate(4 4)">
+    <path d="M7.8 8.5C8.5 5.2 11.4 2.8 14.8 2.8H61.6L56.1 29.9H32.9L31.8 35.1H52.5L48.4 55.8H27.6L24.1 73H0L7.8 8.5Z" fill="#0A5CAA"/>
+    <path d="M35.5 14.8H53.1L50.9 25.4H33.3L35.5 14.8Z" fill="white"/>
+    <path d="M65.3 8.5C66 5.2 68.9 2.8 72.3 2.8H119.8C134.1 2.8 143.1 11.4 140.4 25.1C137.6 39.5 126.4 48.2 111.3 48.2H91.7L86.8 73H62.7L65.3 8.5Z" fill="#F36F21"/>
+    <path d="M93.9 14.8H111.4C116.3 14.8 119.4 17.4 118.5 22.1C117.7 26.6 114 29.4 109.1 29.4H91L93.9 14.8Z" fill="white"/>
+    <path d="M144.7 8.5C145.4 5.2 148.3 2.8 151.7 2.8H214L209.4 25.9H190.6L181.1 73H157L166.5 25.9H140.2L144.7 8.5Z" fill="#41AD49"/>
+    <path d="M158 14.8H201.2L198.9 25.9H184.1L174.6 73H161.8L171.3 25.9H156.4L158 14.8Z" fill="white"/>
+  </g>
+  <text x="232" y="38" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#0072BC">Fpt University</text>
+  <text x="232" y="66" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#F36F21">ĐẠI HỌC FPT</text>
+</svg>

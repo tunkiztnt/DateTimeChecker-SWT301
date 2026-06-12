@@ -2,14 +2,14 @@
 . "$PSScriptRoot\common.ps1"
 
 Write-Host "Checking if port 4173 is already in use..."
-$netstat = netstat -ano | Select-String ":4173"
+$netstat = netstat -ano | Select-String "LISTENING" | Select-String ":4173\s"
 if ($netstat) {
     foreach ($line in $netstat) {
         if ($line.Line -match '\s+(\d+)\s*$') {
             $pidToKill = $Matches[1]
             if ($pidToKill -and $pidToKill -ne 0) {
                 Write-Host "Port 4173 is in use by PID $pidToKill. Killing it..."
-                taskkill /PID $pidToKill /F
+                taskkill /PID $pidToKill /F 2>$null | Out-Null
                 Start-Sleep -Seconds 1
             }
         }

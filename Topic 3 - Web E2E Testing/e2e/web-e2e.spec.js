@@ -1,237 +1,200 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Web E2E Testing @e2e', () => {
+const dateCases = [
+  {
+    id: 'E2E01',
+    name: 'Happy path flow',
+    day: '15',
+    month: '6',
+    year: '2023',
+    expectedResult: 'VALID',
+    expectedValid: true,
+    expectedModal: 'is correct date time!',
+    meaning: 'Normal valid date should be accepted.',
+  },
+  {
+    id: 'E2E02',
+    name: 'Invalid non-leap February date',
+    day: '29',
+    month: '2',
+    year: '2023',
+    expectedResult: 'INVALID',
+    expectedValid: false,
+    expectedModal: 'is NOT correct date time!',
+    meaning: 'February 29 is invalid when the year is not leap.',
+  },
+  {
+    id: 'E2E03',
+    name: 'Day out of range',
+    day: '32',
+    month: '1',
+    year: '2023',
+    expectedResult: 'ERROR',
+    expectedValid: false,
+    expectedModal: 'Day is out of range',
+    meaning: 'Day must stay inside 1-31 before date calculation.',
+  },
+  {
+    id: 'E2E04',
+    name: 'Non-numeric day format',
+    day: 'abc',
+    month: '1',
+    year: '2023',
+    expectedResult: 'ERROR',
+    expectedValid: false,
+    expectedModal: 'Day is incorrect format',
+    meaning: 'Day must be an integer, not text.',
+  },
+  {
+    id: 'E2E06',
+    name: 'Minimum valid boundary',
+    day: '1',
+    month: '1',
+    year: '1000',
+    expectedResult: 'VALID',
+    expectedValid: true,
+    expectedModal: 'is correct date time!',
+    meaning: 'The minimum allowed date should be accepted.',
+  },
+  {
+    id: 'E2E07',
+    name: 'Maximum valid boundary',
+    day: '31',
+    month: '12',
+    year: '3000',
+    expectedResult: 'VALID',
+    expectedValid: true,
+    expectedModal: 'is correct date time!',
+    meaning: 'The maximum allowed date should be accepted.',
+  },
+  {
+    id: 'E2E08',
+    name: 'Leap year divisible by 400',
+    day: '29',
+    month: '2',
+    year: '2000',
+    expectedResult: 'VALID',
+    expectedValid: true,
+    expectedModal: 'is correct date time!',
+    meaning: 'Year 2000 is a leap year because it is divisible by 400.',
+  },
+  {
+    id: 'E2E09',
+    name: 'Century year not divisible by 400',
+    day: '29',
+    month: '2',
+    year: '1900',
+    expectedResult: 'INVALID',
+    expectedValid: false,
+    expectedModal: 'is NOT correct date time!',
+    meaning: 'Year 1900 is not leap because century years must be divisible by 400.',
+  },
+];
 
+async function runDateCase(page, tc) {
+  console.log('');
+  console.log(`[CASE START] ${tc.id} - ${tc.name}`);
+  console.log(`[MEANING] ${tc.meaning}`);
+  console.log(`[INPUT] Day='${tc.day}', Month='${tc.month}', Year='${tc.year}'`);
+  console.log(`[EXPECTED] API result=${tc.expectedResult}, valid=${tc.expectedValid}, modal contains='${tc.expectedModal}'`);
+
+  await expect(page).toHaveTitle(/Date Time Checker/i);
+  await expect(page.getByRole('heading', { name: 'Date Time Checker' })).toBeVisible();
+
+  const dayInput = page.getByLabel('Day');
+  const monthInput = page.getByLabel('Month');
+  const yearInput = page.getByLabel('Year');
+  const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
+
+  console.log(`[ACTION] ${tc.id} locate Day, Month, Year inputs and Check button.`);
+  await expect(dayInput).toBeVisible();
+  await expect(monthInput).toBeVisible();
+  await expect(yearInput).toBeVisible();
+  await expect(checkBtn).toBeVisible();
+
+  console.log(`[ACTION] ${tc.id} fill Day='${tc.day}'.`);
+  await dayInput.fill(tc.day);
+  console.log(`[ACTION] ${tc.id} fill Month='${tc.month}'.`);
+  await monthInput.fill(tc.month);
+  console.log(`[ACTION] ${tc.id} fill Year='${tc.year}'.`);
+  await yearInput.fill(tc.year);
+
+  const responsePromise = page.waitForResponse(
+    response => response.url().includes('/api/') && response.status() === 200
+  );
+
+  console.log(`[ACTION] ${tc.id} click Check and wait for HTTP response.`);
+  await checkBtn.click();
+
+  const response = await responsePromise;
+  const json = await response.json();
+
+  await expect(page.locator('#winformsMessageBox')).toBeVisible({ timeout: 1000 });
+  const resultTitle = (await page.locator('#resultTitle').textContent()) || '';
+  const modalTitle = (await page.locator('#wfMbTitle').textContent()) || '';
+  const modalMessage = (await page.locator('#wfMbMessage').textContent()) || '';
+
+  console.log(`[ACTUAL] ${tc.id} HTTP=${response.status()}, API result=${json.result}, valid=${json.valid}`);
+  console.log(`[ACTUAL] ${tc.id} UI result title='${resultTitle.trim()}'`);
+  console.log(`[ACTUAL] ${tc.id} Modal title='${modalTitle.trim()}', message='${modalMessage.trim()}'`);
+
+  expect(json.result).toBe(tc.expectedResult);
+  expect(json.valid).toBe(tc.expectedValid);
+  await expect(page.locator('#wfMbMessage')).toContainText(tc.expectedModal);
+
+  console.log(`[RESULT] ${tc.id} PASS - expected result matched actual API and visible modal.`);
+  console.log(`[ACTION] ${tc.id} click OK to close result modal and prepare next case.`);
+  await page.locator('#wfMbOkBtn').click();
+}
+
+test.describe('Web E2E Testing @e2e', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the app home page and wait for it to load
     await page.goto('http://localhost:4173');
   });
 
-  test('E2E01: Happy path flow @e2e', async ({ page }) => {
-    // Page title or heading contains "DateTimeChecker" or "Date Time Checker"
-    await expect(page).toHaveTitle(/Date Time Checker/i);
-    await expect(page.getByRole('heading', { name: 'Date Time Checker' })).toBeVisible();
+  for (const tc of dateCases.slice(0, 4)) {
+    test(`${tc.id}: input day=${tc.day}, month=${tc.month}, year=${tc.year} -> ${tc.expectedResult} (${tc.name}) @e2e`, async ({ page }) => {
+      await runDateCase(page, tc);
+    });
+  }
 
-    // Three input fields are visible (Day, Month, Year)
-    const dayInput = page.getByLabel('Day');
-    const monthInput = page.getByLabel('Month');
-    const yearInput = page.getByLabel('Year');
-    await expect(dayInput).toBeVisible();
-    await expect(monthInput).toBeVisible();
-    await expect(yearInput).toBeVisible();
+  test('E2E05: click Close App -> No keeps app open, Yes closes app @e2e', async ({ page }) => {
+    console.log('');
+    console.log('[CASE START] E2E05 - Close/Exit modal behavior');
+    console.log('[MEANING] Verify the app asks for confirmation before closing.');
+    console.log('[INPUT] Action sequence: click Close App, click No, click Close App again, click Yes.');
+    console.log('[EXPECTED] No keeps the form visible; Yes replaces the app with a closed state.');
 
-    // Check button is visible
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    await expect(checkBtn).toBeVisible();
-
-    // Enter day="15", month="6", year="2023"
-    await dayInput.fill('15');
-    await monthInput.fill('6');
-    await yearInput.fill('2023');
-
-    // Click Check button
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    // Result appears within 1000ms (use expect with timeout on the response or element)
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    // Result message contains "VALID"
-    expect(json.result).toBe('VALID');
-
-    // Verify dialog shows correct validation result
-    const messageBoxText = page.getByText('is correct date time!');
-    await expect(messageBoxText).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog to clean up state
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E02: Invalid date flow @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('29');
-    await page.getByLabel('Month').fill('2');
-    await page.getByLabel('Year').fill('2023');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    // Result contains "INVALID"
-    expect(json.result).toBe('INVALID');
-
-    // Verify UI confirmation
-    await expect(page.getByText('is NOT correct date time!')).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E03: Out-of-range validation @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('32');
-    await page.getByLabel('Month').fill('1');
-    await page.getByLabel('Year').fill('2023');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('ERROR');
-
-    // Error message appears (contains "range" or "invalid" or shows an error style)
-    await expect(page.getByText('is out of range', { exact: false })).toBeVisible({ timeout: 1000 });
-    await expect(page.getByText('Error', { exact: true })).toBeVisible();
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E04: Non-numeric validation @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('abc');
-    await page.getByLabel('Month').fill('1');
-    await page.getByLabel('Year').fill('2023');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('ERROR');
-
-    // Error message appears (contains "format" or "invalid" style)
-    await expect(page.getByText('incorrect format', { exact: false })).toBeVisible({ timeout: 1000 });
-    await expect(page.getByText('Error', { exact: true })).toBeVisible();
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E05: Close/Exit modal @e2e', async ({ page }) => {
-    // Click the close button (X button, top-right)
     const closeBtn = page.getByRole('button', { name: 'Close App' });
+    const closeModal = page.locator('#closeModal');
+    const noBtn = page.locator('#confirmCloseNo');
+    const yesBtn = page.locator('#confirmCloseYes');
+
+    console.log('[ACTION] E2E05 click Close App button.');
     await closeBtn.click();
+    await expect(closeModal).toBeVisible();
+    console.log('[ACTUAL] E2E05 close confirmation modal is visible.');
 
-    // A confirmation dialog appears with "Yes" and "No" options
-    const confirmationText = page.getByText('Bạn có chắc chắn muốn đóng ứng dụng DateTimeChecker?');
-    await expect(confirmationText).toBeVisible();
-
-    const noBtn = page.getByRole('button', { name: 'No', exact: true });
-    const yesBtn = page.getByRole('button', { name: 'Yes', exact: true });
-    await expect(noBtn).toBeVisible();
-    await expect(yesBtn).toBeVisible();
-
-    // Click "No" → dialog closes, application still visible
+    console.log('[ACTION] E2E05 click No.');
     await noBtn.click();
-    await expect(confirmationText).toBeHidden();
+    await expect(closeModal).toBeHidden();
     await expect(page.getByLabel('Day')).toBeVisible();
+    console.log('[ACTUAL] E2E05 modal closed and main form is still visible.');
 
-    // Click close button again
+    console.log('[ACTION] E2E05 click Close App again, then click Yes.');
     await closeBtn.click();
-    await expect(confirmationText).toBeVisible();
-
-    // Click "Yes" → application closes (or redirects to a closed state)
+    await expect(closeModal).toBeVisible();
     await yesBtn.click();
-    await expect(page.getByText('Ứng dụng đã đóng')).toBeVisible();
+
+    await expect(page.locator('#checkerForm')).toHaveCount(0);
+    const closedTitle = (await page.locator('.app-shell h2').textContent()) || '';
+    console.log(`[ACTUAL] E2E05 app closed title='${closedTitle.trim()}'.`);
+    console.log('[RESULT] E2E05 PASS - close confirmation behavior works.');
   });
 
-  test('E2E06: Boundary: minimum valid date @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('1');
-    await page.getByLabel('Month').fill('1');
-    await page.getByLabel('Year').fill('1000');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('VALID');
-    await expect(page.getByText('is correct date time!')).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E07: Boundary: maximum valid date @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('31');
-    await page.getByLabel('Month').fill('12');
-    await page.getByLabel('Year').fill('3000');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('VALID');
-    await expect(page.getByText('is correct date time!')).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E08: Leap year visual confirmation - 2000 @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('29');
-    await page.getByLabel('Month').fill('2');
-    await page.getByLabel('Year').fill('2000');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('VALID');
-    await expect(page.getByText('is correct date time!')).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
-  test('E2E09: Leap year visual confirmation - 1900 @e2e', async ({ page }) => {
-    await page.getByLabel('Day').fill('29');
-    await page.getByLabel('Month').fill('2');
-    await page.getByLabel('Year').fill('1900');
-
-    const checkBtn = page.getByRole('button', { name: 'Check', exact: true });
-    const responsePromise = page.waitForResponse(
-      response => response.url().includes('/api/') && response.status() === 200
-    );
-    await checkBtn.click();
-    
-    const response = await responsePromise;
-    const json = await response.json();
-    
-    expect(json.result).toBe('INVALID');
-    await expect(page.getByText('is NOT correct date time!')).toBeVisible({ timeout: 1000 });
-
-    // Dismiss dialog
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  });
-
+  for (const tc of dateCases.slice(4)) {
+    test(`${tc.id}: input day=${tc.day}, month=${tc.month}, year=${tc.year} -> ${tc.expectedResult} (${tc.name}) @e2e`, async ({ page }) => {
+      await runDateCase(page, tc);
+    });
+  }
 });

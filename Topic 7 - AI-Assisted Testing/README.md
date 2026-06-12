@@ -1,34 +1,76 @@
-# Topic 7: AI-Assisted Testing - Kiểm thử Hỗ trợ bởi Trí tuệ Nhân tạo (AI)
+# Topic 7: AI-Assisted Testing - Kiểm thử hỗ trợ bởi AI
 
-Thư mục này chứa các tệp tin và hướng dẫn demo chức năng kiểm thử có sự hỗ trợ của trí tuệ nhân tạo (AI-assisted testing) thông qua mô hình ngôn ngữ **Google Gemini AI**.
+## Dùng để làm gì?
 
----
+AI-Assisted Testing dùng Google Gemini để hỗ trợ tester tạo testcase, giải thích chiến lược kiểm thử và mô phỏng self-healing testing. Topic này không thay tester, mà giúp tester suy nghĩ nhanh hơn và có thêm gợi ý kiểm thử.
 
-## 1. Thành phần
+## Vai trò và ý nghĩa
 
-- **Tài liệu hướng dẫn demo**: [AI-ASSISTED-TESTING-DEMO.md](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%207%20-%20AI-Assisted%20Testing/AI-ASSISTED-TESTING-DEMO.md) (Hướng dẫn từng bước thực hành cho buổi thuyết trình).
-- **Kịch bản khởi động chat**: [ai-assistant-chat.bat](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%207%20-%20AI-Assisted%20Testing/ai-assistant-chat.bat) (Dùng API key thật kết nối Gemini).
-- **Kịch bản chạy Offline (Dự phòng)**: [ai-assistant-chat-offline-sample.bat](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%207%20-%20AI-Assisted%20Testing/ai-assistant-chat-offline-sample.bat) (Chạy không cần API key, sử dụng dữ liệu mẫu, rất an toàn khi demo).
-- **Reset API key**: [reset-gemini-key.bat](file:///d:/DataFPTU/Semester5/SWT301/DateTimeChecker-AI-Assistant/Topic%207%20-%20AI-Assisted%20Testing/reset-gemini-key.bat) (Xóa key cũ để nhập key mới khi cần thiết).
+- Sinh ý tưởng testcase từ yêu cầu tự nhiên bằng tiếng Việt.
+- Giải thích vì sao cần test ngày nhuận, biên tháng, khoảng năm và sai định dạng.
+- Mô phỏng self-healing: phát hiện locator/test bị lỗi, đề xuất cách sửa và chạy lại regression.
+- Có offline sample để demo ổn định khi không có mạng hoặc chưa có Gemini API key.
 
----
+## Thành phần chính
 
-## 2. Quy trình Demo chính
+- Chat AI thật: `Topic 7 - AI-Assisted Testing/ai-assistant-chat.bat`
+- Chat offline sample: `Topic 7 - AI-Assisted Testing/ai-assistant-chat-offline-sample.bat`
+- Reset key: `Topic 7 - AI-Assisted Testing/reset-gemini-key.bat`
+- Script chat: `scripts/ai-assistant-chat.ps1`
+- Gemini helper: `scripts/gemini-common.ps1`
+- Self-healing demo: `scripts/ai-self-healing-demo.ps1`
+- Hướng dẫn chi tiết: `Topic 7 - AI-Assisted Testing/AI-ASSISTED-TESTING-DEMO.md`
 
-1. **Khởi chạy ứng dụng**: Bấm đúp tệp `run.bat` ở thư mục gốc để khởi chạy Web Server.
-2. **Mở Trình trợ lý AI**: Bấm đúp `ai-assistant-chat.bat` (hoặc bản offline nếu không có mạng/key).
-3. **Nhập câu lệnh tự nhiên (Tiếng Việt)**:
-   > *"Vui lòng giúp tôi testing cái project này để kiểm thử có sai gì không"*
-4. **Xem AI xử lý**:
-   - AI sẽ tự động phân tích yêu cầu.
-   - Sinh danh sách 10 test case động bằng JSON.
-   - Gọi Selenium WebDriver mở trình duyệt Microsoft Edge và tự động nhập/chạy từng test case trên giao diện thực.
-5. **Thử nghiệm tính năng Self-Healing (Tự sửa lỗi)**:
-   - Trong cửa sổ chat AI, gõ `/demo-self-heal`.
-   - AI sẽ tự động phát hiện lỗi giả lập trong source code tạm, đề xuất sửa mã nguồn và chạy lại regression testing để kiểm chứng.
+## Cách chạy
 
----
+Chạy Gemini thật:
 
-## 3. Cách chuẩn bị Gemini API Key
+```powershell
+.\Topic 7 - AI-Assisted Testing\ai-assistant-chat.bat
+```
 
-Bạn có thể tạo một API Key miễn phí tại [Google AI Studio](https://aistudio.google.com/app/apikey). Key sẽ được lưu cục bộ dưới dạng mã hóa trên máy tính của bạn tại thư mục `.secrets` và không bao giờ bị đẩy lên Git.
+Chạy offline sample:
+
+```powershell
+.\Topic 7 - AI-Assisted Testing\ai-assistant-chat-offline-sample.bat
+```
+
+Reset Gemini API key:
+
+```powershell
+.\Topic 7 - AI-Assisted Testing\reset-gemini-key.bat
+```
+
+## Chuẩn bị Gemini API key
+
+1. Vào Google AI Studio và tạo API key.
+2. Chạy `ai-assistant-chat.bat`.
+3. Nhập key khi CMD hỏi.
+4. Script sẽ thử gọi Gemini bằng model mặc định `gemini-2.0-flash` và tự fallback sang một số model phổ biến nếu cần.
+5. Nếu key sai, hết quota hoặc API chưa bật, CMD sẽ in chi tiết lỗi và gợi ý reset key.
+
+Có thể đổi model bằng biến môi trường:
+
+```powershell
+$env:GEMINI_MODEL="gemini-1.5-flash"
+.\Topic 7 - AI-Assisted Testing\ai-assistant-chat.bat
+```
+
+## Luồng hoạt động khi demo
+
+1. Mở chat AI.
+2. Nhập prompt: `Hãy tạo testcase kiểm thử DateTimeChecker cho ngày nhuận, biên tháng và dữ liệu sai định dạng.`
+3. AI trả lời bằng tiếng Việt, đề xuất testcase.
+4. Gõ `/demo-self-heal`.
+5. Script chạy demo AI test generation, self-healing locator và natural language to test code.
+
+## Kết quả mong đợi
+
+- Chữ tiếng Việt hiển thị đúng trong CMD.
+- Với API key hợp lệ, Gemini trả lời bằng tiếng Việt.
+- Với offline sample, demo vẫn chạy không cần key.
+- Self-healing demo in các bước `[AI]`, `[DETECTOR]`, `[AI HEAL]`, `[RESULT]`.
+
+## Gợi ý lời demo
+
+"Topic 7 cho thấy AI có thể hỗ trợ tester tạo testcase và phân tích lỗi. Tester vẫn là người kiểm chứng, quyết định testcase nào dùng và xác nhận kết quả sau khi AI đề xuất."

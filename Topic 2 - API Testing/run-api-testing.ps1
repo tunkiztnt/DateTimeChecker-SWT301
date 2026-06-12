@@ -1,9 +1,19 @@
-. (Join-Path $PSScriptRoot "..\scripts\common.ps1")
+﻿. (Join-Path $PSScriptRoot "..\scripts\common.ps1")
+
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+$OutputEncoding = [Console]::OutputEncoding
 
 $root = Split-Path -Parent $PSScriptRoot
 $reportPath = Join-Path $root "reports\api-testing-report.tsv"
 
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host " API INTEGRATION TEST - POST /api/datetime/check" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "[DEMO] This script sends real HTTP POST requests to the local Java server." -ForegroundColor Gray
+Write-Host "[DEMO] PASS criteria: HTTP 200, expected valid flag, and latency <= 1000 ms." -ForegroundColor Gray
+
 # Start the server using the shared helper script
+Write-Host "[STEP 1] Starting local server..." -ForegroundColor Yellow
 & (Join-Path $root "scripts\start-server.ps1")
 $serverUrl = "http://localhost:4173"
 
@@ -25,6 +35,10 @@ $rows.Add("id`tname`tinput`texpected_valid`tactual_valid`tstatus_code`telapsed_m
 $failures = New-Object System.Collections.Generic.List[string]
 
 try {
+    Write-Host "[STEP 2] Sending $($testCases.Count) API requests..." -ForegroundColor Yellow
+    Write-Host "ID    RESULT  INPUT         EXPECTED  ACTUAL  HTTP  LATENCY  PURPOSE" -ForegroundColor Cyan
+    Write-Host "----  ------  ------------  --------  ------  ----  -------  ------------------------------" -ForegroundColor Cyan
+
     foreach ($testCase in $testCases) {
         $body = @{
             day = $testCase.Day
@@ -46,7 +60,10 @@ try {
         $result = if ($passed) { "PASS" } else { "FAIL" }
         $input = "$($testCase.Day)/$($testCase.Month)/$($testCase.Year)"
 
-        Write-Output "$($testCase.Id) $result - $($testCase.Name) - $input - $($elapsed.ElapsedMilliseconds) ms"
+        $expected = if ($testCase.ExpectedValid) { "true " } else { "false" }
+        $actual = if ($json.valid) { "true " } else { "false" }
+        Write-Host ("{0,-4}  {1,-6}  {2,-12}  {3,-8}  {4,-6}  {5,-4}  {6,5}ms  {7}" -f `
+            $testCase.Id, $result, $input, $expected, $actual, $response.StatusCode, $elapsed.ElapsedMilliseconds, $testCase.Name)
         $rows.Add("$($testCase.Id)`t$($testCase.Name)`t$input`t$($testCase.ExpectedValid)`t$($json.valid)`t$($response.StatusCode)`t$($elapsed.ElapsedMilliseconds)`t$result")
 
         if (-not $passed) {
@@ -59,15 +76,16 @@ try {
         New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
     }
     $rows | Set-Content -LiteralPath $reportPath -Encoding UTF8
-    Write-Output ""
-    Write-Output "API testing report: $reportPath"
+    Write-Host ""
+    Write-Host "[STEP 3] API testing report: $reportPath" -ForegroundColor Cyan
 
     if ($failures.Count -gt 0) {
         throw "$($failures.Count) API test(s) failed: $($failures -join ', ')"
     }
 
-    Write-Output "All $($testCases.Count) API tests passed."
+    Write-Host "[PASS] All $($testCases.Count) API tests passed." -ForegroundColor Green
 } finally {
+    Write-Host "[STEP 4] Stopping local server..." -ForegroundColor Yellow
     & (Join-Path $root "scripts\stop-server.ps1")
 }
 [System.Environment]::Exit(0)

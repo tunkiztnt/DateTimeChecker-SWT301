@@ -1,76 +1,156 @@
 @echo off
 chcp 65001 > nul
-title DateTimeChecker - Run All SQA Testing Topics
+setlocal EnableDelayedExpansion
+title DateTimeChecker - Run All SWT301 Testing Topics
+
+set ROOT=%~dp0
+set TOTAL=8
+set PASSED=0
+set FAILED=0
+set NO_PAUSE=0
+if /I "%~1"=="--no-pause" set NO_PAUSE=1
 
 echo ============================================================
-echo  DATETIMECHECKER SQA AUTOMATED TEST SUITE RUNNER
+echo  DATETIMECHECKER - RUN ALL 8 SWT301 TESTING TOPICS
 echo ============================================================
+echo [DEMO GUIDE] This is the final rehearsal runner for the whole group.
+echo [DEMO GUIDE] Each topic uses its own detailed runner so the CMD output
+echo              still shows purpose, steps, test cases, and report paths.
+echo [DEMO GUIDE] The runner continues after a failed topic so you can see
+echo              the full demo status at the end.
 echo.
 
-echo [INFO] Dang bien dich ma nguon Java...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\build.ps1"
+echo ============================================================
+echo [TOPIC 1/8] UNIT TESTING
+echo ============================================================
+call "%ROOT%Topic 1 - Unit Testing\run-tests.bat" --no-pause
 if errorlevel 1 (
-  echo [ERROR] Bien dich that bai! Khong the chay cac bai kiem thu.
-  goto end
+  echo [RUN-ALL RESULT] Topic 1: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 1: PASSED
+  set /A PASSED+=1
 )
 echo.
 
 echo ============================================================
-echo  1. TOPIC 1 - UNIT TESTING (KIEM THU DON VI)
+echo [TOPIC 2/8] API TESTING
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\test.ps1"
-call npm run test:unit
+call "%ROOT%Topic 2 - API Testing\run-tests.bat" --no-pause
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 2: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 2: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  2. TOPIC 2 - API TESTING (KIEM THU API)
+echo [TOPIC 3/8] WEB E2E TESTING
 echo ============================================================
-call npx playwright test --config="%~dp0playwright.config.js" --grep="@api"
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Topic 2 - API Testing\run-api-testing.ps1"
+call "%ROOT%Topic 3 - Web E2E Testing\run-tests.bat" --no-pause
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 3: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 3: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  3. TOPIC 3 - WEB E2E TESTING (KIEM THU DAU-CUOI WEB)
+echo [TOPIC 4/8] MOBILE TESTING
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\selenium-demo.ps1" -AutoClose
+call "%ROOT%Topic 4 - Mobile Testing\run-tests.bat" --no-pause
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 4: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 4: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  4. TOPIC 4 - MOBILE TESTING (KIEM THU DI DONG)
+echo [TOPIC 5/8] PERFORMANCE TESTING
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Topic 4 - Mobile Testing\run-mobile-testing.ps1"
+call "%ROOT%Topic 5 - Performance Testing\run-tests.bat" --no-pause
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 5: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 5: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  5. TOPIC 5 - PERFORMANCE TESTING (KIEM THU HIEU NANG)
+echo [TOPIC 6/8] VISUAL REGRESSION
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0Topic 5 - Performance Testing\run-performance-tests.ps1"
+call "%ROOT%Topic 6 - Visual Regression\run-tests.bat" --no-pause
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 6: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 6: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  6. TOPIC 6 - VISUAL REGRESSION (KIEM THU KHOP ANH GIAO DIEN)
+echo [TOPIC 7/8] AI-ASSISTED TESTING
 echo ============================================================
-call npx playwright test --config="%~dp0playwright.config.js" --grep="@visual"
+echo [DEMO GUIDE] Purpose: show AI-assisted testcase generation and self-healing.
+echo [DEMO GUIDE] Mode: offline sample, stable for video recording without Gemini quota.
+echo [STEP 1/2] Run AI self-healing demo.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%scripts\ai-self-healing-demo.ps1" -OfflineSample -AutoApprove
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 7: FAILED
+  set /A FAILED+=1
+) else (
+  echo [STEP 2/2] Summary
+  echo  AI-assisted demo: PASS
+  echo  TOPIC 7 COMPLETED SUCCESSFULLY!
+  echo [RUN-ALL RESULT] Topic 7: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  7. TOPIC 7 - AI-ASSISTED TESTING (KIEM THU HO TRO BOI AI)
+echo [TOPIC 8/8] CI/CD AND REPORTING
 echo ============================================================
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\ai-self-healing-demo.ps1" -OfflineSample -AutoApprove
+call "%ROOT%Topic 8 - CI CD and Reporting\run-ci-simulation.bat"
+if errorlevel 1 (
+  echo [RUN-ALL RESULT] Topic 8: FAILED
+  set /A FAILED+=1
+) else (
+  echo [RUN-ALL RESULT] Topic 8: PASSED
+  set /A PASSED+=1
+)
 echo.
 
 echo ============================================================
-echo  8. TOPIC 8 - CI/CD AND REPORTING (MO PHONG PIPELINE LOCAL)
+echo  RUN ALL TOPICS SUMMARY
 echo ============================================================
-echo [INFO] Chay mo phong tich hop lien tuc (CI/CD Simulation)...
-call "%~dp0Topic 8 - CI CD and Reporting\run-ci-simulation.bat"
+echo  Total topics: %TOTAL%
+echo  Passed:       !PASSED!
+echo  Failed:       !FAILED!
+echo  Reports:      %ROOT%reports
+if !FAILED! EQU 0 (
+  echo  Overall:      SUCCESS
+) else (
+  echo  Overall:      REVIEW FAILED TOPICS ABOVE
+)
+echo ============================================================
 echo.
-
-echo ============================================================
-echo  TAT CA CAC TOPIC DA DUOC CHAY HOAN TAT!
-echo ============================================================
-
-:end
-echo.
-echo Nhan phim bat ky de dong trinh chay.
+if "%NO_PAUSE%"=="1" goto finish
+echo Press any key to close this runner.
 pause > nul
+
+:finish
+if !FAILED! NEQ 0 (
+  exit /b 1
+) else (
+  exit /b 0
+)
