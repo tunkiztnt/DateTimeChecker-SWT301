@@ -1,7 +1,22 @@
 function Get-JavaTools {
-    # Check if javac is in current PATH
-    $javac = Get-Command javac -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-    $java = Get-Command java -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+    $javac = $null
+    $java = $null
+
+    # Prefer the real JDK pointed to by JAVA_HOME instead of Windows shim paths.
+    if ($env:JAVA_HOME) {
+        $javaHomeJavac = Join-Path $env:JAVA_HOME "bin\javac.exe"
+        $javaHomeJava = Join-Path $env:JAVA_HOME "bin\java.exe"
+        if ((Test-Path $javaHomeJavac) -and (Test-Path $javaHomeJava)) {
+            $javac = $javaHomeJavac
+            $java = $javaHomeJava
+        }
+    }
+
+    # Fall back to commands from PATH if JAVA_HOME is not available.
+    if ($null -eq $javac) {
+        $javac = Get-Command javac -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+        $java = Get-Command java -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+    }
 
     if ($null -eq $javac) {
         # Check standard installation paths on Windows

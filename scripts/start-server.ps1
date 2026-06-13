@@ -17,11 +17,31 @@ if ($netstat) {
 }
 
 # Compile Java source
-Write-Host "Compiling Java source files..."
-& "$PSScriptRoot\build.ps1"
+Write-Host "Compiling Java server source files..."
+$tools = Get-JavaTools
+$outDir = "$PSScriptRoot\..\out\classes"
+if (!(Test-Path $outDir)) {
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+}
+
+$mainJavaDir = "$PSScriptRoot\..\src\main\java"
+$javaFiles = @()
+if (Test-Path $mainJavaDir) {
+    $javaFiles = Get-ChildItem -Path $mainJavaDir -Filter "*.java" -Recurse | Select-Object -ExpandProperty FullName
+}
+
+if ($javaFiles.Count -eq 0) {
+    Write-Host "[ERROR] No Java server source files found." -ForegroundColor Red
+    exit 1
+}
+
+& $tools.Javac -encoding UTF-8 -d $outDir $javaFiles
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] Java server compilation failed." -ForegroundColor Red
+    exit 1
+}
 
 # Find Java tools and start server
-$tools = Get-JavaTools
 Write-Host "Starting Java server..."
 $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
 $proc = Start-Process -FilePath $tools.Java -ArgumentList "-cp", "$PSScriptRoot\..\out\classes", "com.datetimechecker.App" -WorkingDirectory $repoRoot -PassThru -WindowStyle Hidden

@@ -5,6 +5,7 @@ module.exports = defineConfig({
   testMatch: [
     '**/Topic 2 - API Testing/**/*.spec.js',
     '**/Topic 3 - Web E2E Testing/**/*.spec.js',
+    '**/Topic 7 - AI-Assisted Testing/**/*.spec.js',
     '**/Topic 6 - Visual Regression/**/*.spec.js'
   ],
   fullyParallel: false,

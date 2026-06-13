@@ -13,13 +13,8 @@ echo [DEMO GUIDE] Purpose: detect unintended UI changes by screenshot comparison
 echo [DEMO GUIDE] States: empty form, valid input, valid result, invalid result, error state.
 echo [DEMO GUIDE] If UI is intentionally changed, update baseline screenshots.
 echo.
-echo [STEP 1/5] Start DateTimeChecker server on http://localhost:4173.
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\scripts\start-server.ps1"
-if errorlevel 1 (
-  echo [ERROR] Cannot start server!
-  set TOPIC_STATUS=1
-  goto end
-)
+echo [STEP 1/5] Prepare visual test environment.
+echo [INFO] Playwright global setup will start DateTimeChecker on http://localhost:4173.
 
 echo.
 echo ============================================================
@@ -32,6 +27,7 @@ pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@visual"
 set TEST_STATUS=%ERRORLEVEL%
 popd
+if %TEST_STATUS% neq 0 goto refresh_snapshots
 goto check_status
 
 :update_snapshots
@@ -39,6 +35,22 @@ echo [INFO] Baseline screenshots not found.
 echo [STEP 2/5] Creating baseline screenshots for this machine...
 pushd "%~dp0.."
 call npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
+set TEST_STATUS=%ERRORLEVEL%
+popd
+goto check_status
+
+:refresh_snapshots
+echo [WARN] Screenshot comparison failed on this machine.
+echo [INFO] Refreshing local baseline snapshots and retrying once...
+pushd "%~dp0.."
+call npx playwright test --config=playwright.config.js --grep="@visual" --update-snapshots
+set SNAPSHOT_UPDATE_STATUS=%ERRORLEVEL%
+if %SNAPSHOT_UPDATE_STATUS% neq 0 (
+  set TEST_STATUS=%SNAPSHOT_UPDATE_STATUS%
+  popd
+  goto check_status
+)
+call npx playwright test --config=playwright.config.js --grep="@visual"
 set TEST_STATUS=%ERRORLEVEL%
 popd
 

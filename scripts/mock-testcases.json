@@ -1,6 +1,55 @@
 [
-  {"id": "AI01", "name": "Kiểm thử ngày thường hợp lệ", "day": "30", "month": "5", "year": "2026", "expectedValid": true},
-  {"id": "AI02", "name": "Kiểm thử ngày vượt biên của Tháng 4", "day": "31", "month": "4", "year": "2026", "expectedValid": false},
-  {"id": "AI03", "name": "Kiểm thử ngày nhuận hợp lệ", "day": "29", "month": "2", "year": "2024", "expectedValid": true},
-  {"id": "AI04", "name": "Kiểm thử ngày nhuận năm thường", "day": "29", "month": "2", "year": "2025", "expectedValid": false}
+  {
+    "id": "AI01",
+    "name": "Valid normal date",
+    "day": "30",
+    "month": "5",
+    "year": "2026",
+    "expectedValid": true,
+    "expectedResult": "VALID",
+    "expectedDisplay": "30/05/2026",
+    "reason": "A standard valid date should pass."
+  },
+  {
+    "id": "AI02",
+    "name": "Invalid day for April",
+    "day": "31",
+    "month": "4",
+    "year": "2026",
+    "expectedValid": false,
+    "expectedResult": "INVALID",
+    "expectedMessageIncludes": "30",
+    "reason": "April has only 30 days."
+  },
+  {
+    "id": "AI03",
+    "name": "Valid leap-year date",
+    "day": "29",
+    "month": "2",
+    "year": "2024",
+    "expectedValid": true,
+    "expectedResult": "VALID",
+    "expectedDisplay": "29/02/2024",
+    "reason": "2024 is a leap year, so February 29 is valid."
+  },
+  {
+    "id": "AI04",
+    "name": "Invalid non-leap-year date",
+    "day": "29",
+    "month": "2",
+    "year": "2025",
+    "expectedValid": false,
+    "expectedResult": "INVALID",
+    "reason": "2025 is not a leap year."
+  },
+  {
+    "id": "AI05",
+    "name": "Out-of-range day",
+    "day": "0",
+    "month": "5",
+    "year": "2026",
+    "expectedValid": false,
+    "expectedResult": "ERROR",
+    "reason": "Day zero is outside the allowed range."
+  }
 ]

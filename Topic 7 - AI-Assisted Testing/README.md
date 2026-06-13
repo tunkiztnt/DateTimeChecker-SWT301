@@ -15,10 +15,13 @@ AI-Assisted Testing dùng Google Gemini để hỗ trợ tester tạo testcase, 
 
 - Chat AI thật: `Topic 7 - AI-Assisted Testing/ai-assistant-chat.bat`
 - Chat offline sample: `Topic 7 - AI-Assisted Testing/ai-assistant-chat-offline-sample.bat`
+- Chạy luồng AI sinh file testcase rồi thực thi test: `Topic 7 - AI-Assisted Testing/run-ai-generated-tests.bat`
 - Reset key: `Topic 7 - AI-Assisted Testing/reset-gemini-key.bat`
 - Script chat: `scripts/ai-assistant-chat.ps1`
 - Gemini helper: `scripts/gemini-common.ps1`
 - Self-healing demo: `scripts/ai-self-healing-demo.ps1`
+- AI testcase generator: `scripts/generate-ai-testcases.ps1`
+- AI testcase runner: `scripts/run-ai-generated-tests.ps1`
 - Hướng dẫn chi tiết: `Topic 7 - AI-Assisted Testing/AI-ASSISTED-TESTING-DEMO.md`
 
 ## Cách chạy
@@ -35,6 +38,18 @@ Chạy offline sample:
 .\Topic 7 - AI-Assisted Testing\ai-assistant-chat-offline-sample.bat
 ```
 
+Chạy demo sinh file testcase rồi dùng file đó làm tham số cho Playwright E2E:
+
+```powershell
+.\Topic 7 - AI-Assisted Testing\run-ai-generated-tests.bat
+```
+
+Chạy bản gọi Gemini thật:
+
+```powershell
+.\Topic 7 - AI-Assisted Testing\run-ai-generated-tests.bat --real
+```
+
 Reset Gemini API key:
 
 ```powershell
@@ -46,7 +61,7 @@ Reset Gemini API key:
 1. Vào Google AI Studio và tạo API key.
 2. Chạy `ai-assistant-chat.bat`.
 3. Nhập key khi CMD hỏi.
-4. Script sẽ thử gọi Gemini bằng model mặc định `gemini-2.0-flash` và tự fallback sang một số model phổ biến nếu cần.
+4. Script sẽ thử gọi Gemini bằng model mặc định `gemini-3.1-flash-lite` và tự fallback sang một số model free-tier phổ biến nếu cần.
 5. Nếu key sai, hết quota hoặc API chưa bật, CMD sẽ in chi tiết lỗi và gợi ý reset key.
 
 Có thể đổi model bằng biến môi trường:
@@ -63,6 +78,13 @@ $env:GEMINI_MODEL="gemini-1.5-flash"
 3. AI trả lời bằng tiếng Việt, đề xuất testcase.
 4. Gõ `/demo-self-heal`.
 5. Script chạy demo AI test generation, self-healing locator và natural language to test code.
+
+Luồng demo file-based mới:
+
+1. Gõ `/export-testcases` hoặc chạy `run-ai-generated-tests.bat`.
+2. AI sinh testcase và lưu vào `reports/ai-generated-testcases.json`.
+3. Playwright đọc file JSON này, mở UI web và tự tạo danh sách E2E test để chạy.
+4. Kết quả pass/fail bám theo chính bộ testcase mà AI vừa xuất.
 
 ## Kết quả mong đợi
 

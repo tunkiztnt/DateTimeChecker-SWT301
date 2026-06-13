@@ -14,3 +14,5 @@ reports/
 # Keep baseline screenshots (*.png) but ignore test diffs and actual outputs
 **/__snapshots__/*-diff.png
 **/__snapshots__/*-actual.png
+.secrets/
+debug.log
