@@ -101,17 +101,11 @@ echo.
 echo ============================================================
 echo [TOPIC 7/8] AI-ASSISTED TESTING
 echo ============================================================
-echo [DEMO GUIDE] Purpose: show AI-assisted testcase generation and self-healing.
-echo [DEMO GUIDE] Mode: offline sample, stable for video recording without Gemini quota.
-echo [STEP 1/2] Run AI self-healing demo.
-powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%scripts\ai-self-healing-demo.ps1" -OfflineSample -AutoApprove
+call "%ROOT%Topic 7 - AI-Assisted Testing\run-tests.bat" --no-pause
 if errorlevel 1 (
   echo [RUN-ALL RESULT] Topic 7: FAILED
   set /A FAILED+=1
 ) else (
-  echo [STEP 2/2] Summary
-  echo  AI-assisted demo: PASS
-  echo  TOPIC 7 COMPLETED SUCCESSFULLY!
   echo [RUN-ALL RESULT] Topic 7: PASSED
   set /A PASSED+=1
 )
