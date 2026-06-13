@@ -56,10 +56,10 @@ function Stop-RunningServer {
     $connections = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
     if ($connections) {
         foreach ($conn in $connections) {
-            $pid = $conn.OwningProcess
-            if ($pid -and $pid -ne 0 -and $pid -ne $PID) {
-                Write-Host "Found process $pid listening on port $Port. Killing it..." -ForegroundColor Cyan
-                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+            $processId = $conn.OwningProcess
+            if ($processId -and $processId -ne 0 -and $processId -ne $PID) {
+                Write-Host "Found process $processId listening on port $Port. Killing it..." -ForegroundColor Cyan
+                Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
                 Start-Sleep -Seconds 1
             }
         }
@@ -69,10 +69,10 @@ function Stop-RunningServer {
         if ($netstat) {
             foreach ($line in $netstat) {
                 if ($line.Line -match '\s+(\d+)\s*$') {
-                    $pid = $Matches[1]
-                    if ($pid -and $pid -ne 0 -and $pid -ne $PID) {
-                        Write-Host "Found process $pid listening on port $Port via netstat. Killing it..." -ForegroundColor Cyan
-                        Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+                    $processId = $Matches[1]
+                    if ($processId -and $processId -ne 0 -and $processId -ne $PID) {
+                        Write-Host "Found process $processId listening on port $Port via netstat. Killing it..." -ForegroundColor Cyan
+                        Stop-Process -Id $processId -Force -ErrorAction SilentlyContinue
                         Start-Sleep -Seconds 1
                     }
                 }
@@ -94,8 +94,11 @@ function Start-DateTimeCheckerServerForDemo {
     $port = 4173
     Write-Host "Starting background test server on port $port..." -ForegroundColor Yellow
 
-    # Run Java App in background using a hidden window to prevent console handle sharing and hangs
-    $proc = Start-Process -FilePath $Java -ArgumentList "-cp", $Classes, "com.datetimechecker.App" -PassThru -WindowStyle Hidden
+    $resolvedClasses = (Resolve-Path -LiteralPath $Classes).Path
+    $resolvedRoot = if ($Root) { (Resolve-Path -LiteralPath $Root).Path } else { (Resolve-Path "$PSScriptRoot\..").Path }
+
+    # Run Java App in background using a hidden window to prevent console handle sharing and hangs.
+    $proc = Start-Process -FilePath $Java -ArgumentList @("-cp", $resolvedClasses, "com.datetimechecker.App") -WorkingDirectory $resolvedRoot -PassThru -WindowStyle Hidden
 
     # Wait for the port to open and server to be ready
     $ready = $false

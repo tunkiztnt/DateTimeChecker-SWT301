@@ -8,10 +8,11 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $tools = Get-JavaTools
-$classPath = "$PSScriptRoot\..\out\classes"
+$classPath = (Resolve-Path -LiteralPath "$PSScriptRoot\..\out\classes").Path
+$junitJar = (Resolve-Path -LiteralPath "$PSScriptRoot\..\lib\junit-platform-console-standalone-1.10.2.jar").Path
 
 Write-Host "Running Java backend unit tests..." -ForegroundColor Green
-& $tools.Java -cp "$classPath;$PSScriptRoot\..\lib\junit-platform-console-standalone-1.10.2.jar" com.datetimechecker.DateTimeValidationServiceTest
+& $tools.Java -cp "$classPath;$junitJar" com.datetimechecker.DateTimeValidationServiceTest
 
 $exitCode = $LASTEXITCODE
 if ($exitCode -ne 0) {
