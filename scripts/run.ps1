@@ -1,23 +1,23 @@
 . "$PSScriptRoot\common.ps1"
 
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+$OutputEncoding = [Console]::OutputEncoding
+
 $tools = Get-JavaTools
 Write-Host "Using Java: $($tools.Java)" -ForegroundColor Cyan
 
-# Ensure code is compiled
-Write-Host "Biên dịch dự án..." -ForegroundColor Yellow
+Write-Host "Compiling DateTimeChecker app..." -ForegroundColor Yellow
 powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\build.ps1"
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] Biên dịch thất bại!" -ForegroundColor Red
+    Write-Host "[ERROR] Compilation failed!" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "Đang khởi động DateTimeChecker Server..." -ForegroundColor Green
-Write-Host "Mở trình duyệt tại: http://localhost:4173" -ForegroundColor Yellow
+Write-Host "Starting DateTimeChecker server..." -ForegroundColor Green
+Write-Host "Opening browser at: http://localhost:4173" -ForegroundColor Yellow
 
-# Start the browser asynchronously
 Start-Process "http://localhost:4173"
 
-# Run the server in foreground
 $classPath = "$PSScriptRoot\..\out\classes"
 Stop-RunningServer
 $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
