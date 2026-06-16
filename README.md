@@ -37,7 +37,26 @@ scripts/run.ps1               Compile and run the app
 scripts/start-server.ps1      Start server for local use
 scripts/stop-server.ps1       Stop server on port 4173
 run.bat                       Windows launcher
+tests/                        Playwright E2E tests (AI-Assisted & Self-Healing)
+scripts/ai-testing-tool.js    AI-Assisted Testing Interactive Dashboard
+AI_Testing_Report.md          Detailed report of AI testing design and results
 ```
+
+## AI-Assisted Testing (Interactive Demo)
+
+Double-click:
+
+```bat
+run-ai-test.bat
+```
+
+Or run from the command line:
+
+```bash
+npm run ai-test
+```
+
+For more details on the testing design, equivalence partitions, boundary values, and self-healing mechanics, please see the [AI_Testing_Report.md](file:///c:/Users/nem/Desktop/DateTimeChecker/DateTimeChecker-SWT301/AI_Testing_Report.md) file.
 
 ## Notes
 

@@ -1,0 +1,14 @@
+{
+  "name": "datetime-checker-testing",
+  "version": "1.0.0",
+  "description": "AI-Assisted Testing demo for DateTimeChecker app",
+  "main": "scripts/ai-testing-tool.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "ai-test": "node scripts/ai-testing-tool.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

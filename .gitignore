@@ -2,6 +2,14 @@
 out/
 *.class
 
+# Node dependencies and test results
+node_modules/
+playwright-report/
+test-results/
+
+# Secrets
+.env
+
 # Local/editor noise
 .DS_Store
 Thumbs.db

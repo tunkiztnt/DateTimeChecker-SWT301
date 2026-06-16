@@ -1,12 +1,51 @@
+// Unregister any legacy service workers to prevent aggressive caching of static assets
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister().then(() => {
+        console.log('Legacy Service Worker unregistered.');
+      });
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Self-Healing helper functions for the web page inputs and buttons
+  function getInputElement(id, labelText) {
+    let el = document.getElementById(id);
+    if (!el) {
+      const labels = Array.from(document.querySelectorAll('label'));
+      const label = labels.find(l => l.textContent.trim().toLowerCase() === labelText.toLowerCase());
+      if (label) {
+        const forAttr = label.getAttribute('for');
+        if (forAttr) {
+          el = document.getElementById(forAttr);
+        }
+        if (!el) {
+          el = label.parentElement.querySelector('input');
+        }
+      }
+    }
+    return el;
+  }
+
+  function getButtonElement(id, buttonText) {
+    let el = document.getElementById(id);
+    if (!el) {
+      const buttons = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"]'));
+      el = buttons.find(b => b.textContent.trim().toLowerCase() === buttonText.toLowerCase());
+    }
+    return el;
+  }
+
   // DOM Elements
   const checkerForm = document.getElementById('checkerForm');
-  const dayInput = document.getElementById('day');
-  const monthInput = document.getElementById('month');
-  const yearInput = document.getElementById('year');
+  const dayInput = getInputElement('day', 'Day');
+  const monthInput = getInputElement('month', 'Month');
+  const yearInput = getInputElement('year', 'Year');
   
-  const clearButton = document.getElementById('clearButton');
-  const nowButton = document.getElementById('nowButton');
+  const clearButton = getButtonElement('clearButton', 'Clear');
+  const nowButton = getButtonElement('nowButton', 'Use Today');
   const themeButton = document.getElementById('themeButton');
   const closeButton = document.getElementById('closeButton');
   
@@ -109,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Replace whole app UI with a clean exited state
     document.querySelector('.app-shell').innerHTML = `
       <div style="padding: 48px; text-align: center; font-family: sans-serif;">
-        <h2 style="color: #ef4444; margin-bottom: 16px;">Ứng dụng đã đóng</h2>
-        <p style="color: var(--text-secondary);">Bạn có thể đóng tab trình duyệt này. Cảm ơn bạn đã sử dụng DateTimeChecker!</p>
-        <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 24px; display: inline-flex; width: auto;">Mở lại</button>
+        <h2 style="color: #ef4444; margin-bottom: 16px;">Application closed</h2>
+        <p style="color: var(--text-secondary);">You can close this browser tab. Thank you for using DateTimeChecker!</p>
+        <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 24px; display: inline-flex; width: auto;">Reopen</button>
       </div>
     `;
   });
@@ -168,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Validation error:', error);
       displayResult({
         valid: false,
-        errors: [`Không thể kết nối đến máy chủ: ${error.message}`]
+        errors: [`Could not connect to the server: ${error.message}`]
       });
     }
   }
@@ -179,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (result.valid) {
       // Valid Date State
-      resultTitle.textContent = 'Ngày hợp lệ';
+      resultTitle.textContent = 'Valid date';
       resultTitle.style.color = 'var(--success-text)';
       resultContent.style.backgroundColor = 'var(--success-bg)';
       resultContent.style.borderColor = 'var(--success-border)';
@@ -188,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resultContent.style.borderRadius = '8px';
       resultContent.style.padding = '16px';
       
-      resultMessage.textContent = `${result.details.display} là một ngày hợp lệ.`;
+      resultMessage.textContent = `${result.details.display} is a valid date.`;
       resultMessage.style.color = 'var(--success-text)';
       
       // Success Checkmark Icon SVG
@@ -210,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
       detailMonthDays.textContent = result.details.monthDays;
     } else {
       // Invalid Date State
-      resultTitle.textContent = 'Ngày không hợp lệ';
+      resultTitle.textContent = 'Invalid date';
       resultTitle.style.color = 'var(--error-text)';
       resultContent.style.backgroundColor = 'var(--error-bg)';
       resultContent.style.borderColor = 'var(--error-border)';
@@ -250,15 +289,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!result.valid) {
       const errors = result.errors || [];
-      const hasDayFormat = errors.some(e => e.includes("Ngày không được để trống") || e.includes("Ngày phải là số nguyên"));
-      const hasMonthFormat = errors.some(e => e.includes("Tháng không được để trống") || e.includes("Tháng phải là số nguyên"));
-      const hasYearFormat = errors.some(e => e.includes("Năm không được để trống") || e.includes("Năm phải là số nguyên"));
+      const hasDayFormat = errors.some(e => e.includes("Day cannot be empty") || e.includes("Day must be an integer"));
+      const hasMonthFormat = errors.some(e => e.includes("Month cannot be empty") || e.includes("Month must be an integer"));
+      const hasYearFormat = errors.some(e => e.includes("Year cannot be empty") || e.includes("Year must be an integer"));
       
-      const hasDayRange = errors.some(e => e.includes("Ngày phải nằm trong khoảng 1-31"));
-      const hasMonthRange = errors.some(e => e.includes("Tháng phải nằm trong khoảng 1-12"));
-      const hasYearRange = errors.some(e => e.includes("Năm phải nằm trong khoảng 1000-3000"));
+      const hasDayRange = errors.some(e => e.includes("Day must be in range 1-31"));
+      const hasMonthRange = errors.some(e => e.includes("Month must be in range 1-12"));
+      const hasYearRange = errors.some(e => e.includes("Year must be in range 1000-3000"));
       
-      const hasDaysInMonthError = errors.some(e => e.includes("chỉ có") && e.includes("ngày"));
+      const hasDaysInMonthError = errors.some(e => e.includes("has only") && e.includes("days"));
 
       if (hasDayFormat) {
         wfTitle = "Error";
