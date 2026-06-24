@@ -344,7 +344,7 @@ Each object must have the following fields:
   }
   
   // Write the generated test cases to a JSON file for Playwright to read
-  const generatedTestsPath = path.join(__dirname, '..', 'tests', 'generated_tests.json');
+  const generatedTestsPath = path.join(__dirname, '..', 'topics', '06-ai-assisted-testing', 'generated_tests.json');
   fs.writeFileSync(generatedTestsPath, JSON.stringify(testSuiteJson, null, 2));
   
   console.log("------------------------------------------------------------");
@@ -370,7 +370,7 @@ Each object must have the following fields:
   console.log("\n\x1b[32m[APPROVED] Test suite approved. Proceeding to execution...\x1b[0m");
   let rerun = true;
   while (rerun) {
-    const healedLogPath = path.join(__dirname, '..', 'tests', 'healed-log.json');
+    const healedLogPath = path.join(__dirname, '..', 'topics', '06-ai-assisted-testing', 'healed-log.json');
     if (fs.existsSync(healedLogPath)) {
       try {
         fs.unlinkSync(healedLogPath);
@@ -426,7 +426,7 @@ Each object must have the following fields:
       if (process.argv.includes('--headless')) {
         process.env.HEADLESS = 'true';
       }
-      execSync('npx playwright test', { stdio: ['ignore', 'inherit', 'inherit'] });
+      execSync('npx playwright test topics/06-ai-assisted-testing/datetime.spec.js', { stdio: ['ignore', 'inherit', 'inherit'] });
       testSuccess = true;
     } catch (err) {
       console.log("\n\x1b[31m[TEST FAIL] Playwright test suite execution failed.\x1b[0m");

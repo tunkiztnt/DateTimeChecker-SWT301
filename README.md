@@ -37,7 +37,7 @@ scripts/run.ps1               Compile and run the app
 scripts/start-server.ps1      Start server for local use
 scripts/stop-server.ps1       Stop server on port 4173
 run.bat                       Windows launcher
-tests/                        Playwright E2E tests (AI-Assisted & Self-Healing)
+topics/                       SWT301 demo topics and test suites
 scripts/ai-testing-tool.js    AI-Assisted Testing Interactive Dashboard
 AI_Testing_Report.md          Detailed report of AI testing design and results
 ```
@@ -56,10 +56,10 @@ Or run from the command line:
 npm run ai-test
 ```
 
-For more details on the testing design, equivalence partitions, boundary values, and self-healing mechanics, please see the [AI_Testing_Report.md](file:///c:/Users/nem/Desktop/DateTimeChecker/DateTimeChecker-SWT301/AI_Testing_Report.md) file.
+For more details on the testing design, equivalence partitions, boundary values, and self-healing mechanics, please see `AI_Testing_Report.md`.
 
 ## Notes
 
 - The server uses port `4173`.
 - Build output is written to `out/classes`.
-- All previous SWT301 testing topic folders and demo tooling have been removed, leaving only the application.
+- Topic launchers and reports now live under `topics/`.

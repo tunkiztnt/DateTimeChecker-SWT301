@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "b183626e-473d-4c3e-908a-2c8e2bd3cf0a",
+		"name": "DateTimeChecker API Testing Collection",
+		"description": "Collection of API test requests for DateTimeChecker Java application, verifying logic for valid, invalid, and error date inputs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Valid Date Check (29/02/2024)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"day\": \"29\",\n    \"month\": \"2\",\n    \"year\": \"2024\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:4173/api/datetime/check",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4173",
+					"path": [
+						"api",
+						"datetime",
+						"check"
+					]
+				}
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Date is valid\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(true);",
+							"    pm.expect(jsonData.result).to.eql(\"VALID\");",
+							"    pm.expect(jsonData.message).to.eql(\"Valid date.\");",
+							"});",
+							"",
+							"pm.test(\"Details are correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.details.display).to.eql(\"29/02/2024\");",
+							"    pm.expect(jsonData.details.leapYear).to.eql(\"Yes\");",
+							"    pm.expect(jsonData.details.weekday).to.eql(\"Thursday\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Invalid Date Check (29/02/2023)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"day\": \"29\",\n    \"month\": \"2\",\n    \"year\": \"2023\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:4173/api/datetime/check",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4173",
+					"path": [
+						"api",
+						"datetime",
+						"check"
+					]
+				}
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Date is invalid\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(false);",
+							"    pm.expect(jsonData.result).to.eql(\"INVALID\");",
+							"    pm.expect(jsonData.message).to.include(\"has only 28 days\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Error Check - Day Out of Range (32/02/2020)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"day\": \"32\",\n    \"month\": \"2\",\n    \"year\": \"2020\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:4173/api/datetime/check",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4173",
+					"path": [
+						"api",
+						"datetime",
+						"check"
+					]
+				}
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Day range error detected\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.valid).to.eql(false);",
+							"    pm.expect(jsonData.result).to.eql(\"ERROR\");",
+							"    pm.expect(jsonData.message).to.eql(\"Day must be in range 1-31.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		}
+	]
+}

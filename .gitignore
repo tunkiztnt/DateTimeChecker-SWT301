@@ -6,6 +6,8 @@ out/
 node_modules/
 playwright-report/
 test-results/
+allure-results/
+allure-report/
 
 # Secrets
 .env
@@ -13,3 +15,12 @@ test-results/
 # Local/editor noise
 .DS_Store
 Thumbs.db
+
+# Generated topic reports
+topics/reports/*.txt
+
+# Generated Flutter artifacts
+topics/03-mobile-testing/flutter_app/build/
+topics/03-mobile-testing/flutter_app/.dart_tool/
+topics/03-mobile-testing/flutter_app/android/.gradle/
+topics/03-mobile-testing/flutter_app/android/build/

@@ -31,7 +31,7 @@ $global:SERVER_PID = $proc.Id
 $ready = $false
 for ($i = 0; $i -lt 15; $i++) {
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:4173/api/check-date" -Method POST -Body "{}" -ContentType "application/json" -UseBasicParsing -TimeoutSec 1
+        $response = Invoke-WebRequest -Uri "http://localhost:4173/api/datetime/check" -Method POST -Body "{}" -ContentType "application/json" -UseBasicParsing -TimeoutSec 1
         if ($response) {
             $ready = $true
             break
