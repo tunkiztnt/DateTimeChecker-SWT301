@@ -10,7 +10,7 @@ if /I "%~1"=="--open-report" set "OPEN_REPORT=-OpenReport"
 echo ============================================================
 echo  RUNNING TOPIC 7: CI/CD PIPELINE DEMO
 echo ============================================================
-echo  Flow: Build ^> API Smoke ^> Web E2E ^> Visual ^> Allure ^> Release ZIP
+echo  Flow is controlled by StageStatus inside topics\07-cicd-reporting\run.ps1
 echo.
 
 powershell -NoProfile -ExecutionPolicy Bypass -File ".\topics\07-cicd-reporting\run.ps1" %OPEN_REPORT%

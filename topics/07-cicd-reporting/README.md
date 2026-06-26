@@ -36,6 +36,50 @@ Workflow file:
 
 The workflow runs on `windows-latest` so local rendering and CI rendering stay aligned for the visual-regression stage.
 
+By default, the GitHub Actions workflow calls:
+
+```powershell
+.\topics\07-cicd-reporting\run.ps1 -CiMode
+```
+
+The workflow does not decide which test groups are enabled. The source of truth is the `StageStatus` block near the top of:
+
+```text
+topics/07-cicd-reporting/run.ps1
+```
+
+Default demo setup:
+
+```powershell
+$StageStatus = [ordered]@{
+    ApiSmoke = 'ON'
+    WebE2E = 'ON'
+    VisualRegression = 'OFF'
+    AllureReport = 'ON'
+    ReleasePackage = 'ON'
+}
+```
+
+This keeps the CI pipeline fast and stable by skipping visual regression by default. The summary still records `Visual Regression Tests` as `SKIPPED`.
+
+To run the full pipeline locally, including visual regression, use:
+
+```powershell
+.\topics\07-cicd-reporting\run.ps1 -RunVisual
+```
+
+To temporarily override a stage without editing the file:
+
+```powershell
+.\topics\07-cicd-reporting\run.ps1 -SkipApi
+.\topics\07-cicd-reporting\run.ps1 -SkipWeb
+.\topics\07-cicd-reporting\run.ps1 -RunVisual
+.\topics\07-cicd-reporting\run.ps1 -SkipReport
+.\topics\07-cicd-reporting\run.ps1 -SkipPackage
+```
+
+For a classroom demo, edit `StageStatus` when you want a clear permanent scenario, and use `-Run...` / `-Skip...` switches only for quick one-time runs.
+
 ## Key Artifacts
 
 - Summary: `topics/reports/topic07-cicd/ci-summary.md`
