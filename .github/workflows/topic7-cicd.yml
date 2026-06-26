@@ -2,9 +2,9 @@ name: Topic 7 CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, appVideo ]
+    branches: [ main, master, appVideo, cicdtest ]
   pull_request:
-    branches: [ main, master, appVideo ]
+    branches: [ main, master, appVideo, cicdtest ]
   workflow_dispatch:
 
 jobs:
