@@ -149,7 +149,7 @@ $runAutomation = Read-Host "Run automated mobile test now? (Y/N)"
 if ($runAutomation.Trim().ToLower() -eq "y") {
     Write-Host ""
     Write-Host "Starting automated mobile testing on the installed app..." -ForegroundColor Yellow
-    powershell -NoProfile -ExecutionPolicy Bypass -File $runTestsScript -DeviceId $DeviceId -ReuseInstalledApp
+    powershell -NoProfile -ExecutionPolicy Bypass -File $runTestsScript -DeviceId $DeviceId -ReuseInstalledApp -OpenReport
     exit $LASTEXITCODE
 }
 

@@ -1,0 +1,23 @@
+appId: com.datetimechecker.date_time_checker
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "Date Time Checker"
+- assertVisible: "Waiting for validation"
+
+- tapOn:
+    id: "day_input"
+- inputText: "29"
+- tapOn:
+    id: "month_input"
+- inputText: "2"
+- tapOn:
+    id: "year_input"
+- inputText: "2025"
+- hideKeyboard
+- tapOn:
+    id: "check_now_button"
+
+- assertVisible: "Invalid date"
+- assertVisible: "Month 2 of year 2025 has only 28 days."

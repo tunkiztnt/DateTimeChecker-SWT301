@@ -1,8 +1,8 @@
-# Demo Guide - Mobile Testing
+# Demo Guide - Mobile E2E Testing
 
 ## Goal
 
-Show the updated Flutter mobile UI first, then run automated testing only when needed.
+Show the installed Flutter mobile UI first, then run automated Mobile E2E testing only when needed.
 
 ## Recommended Demo Flow
 
@@ -20,7 +20,7 @@ Use this if you want to force rebuild and reinstall the latest app:
 
 2. On the emulator home screen, tap `Date Time Checker` manually.
 
-3. Show that the mobile screen now follows the PC layout:
+3. Show that the mobile screen follows the PC layout:
    - header with FPT branding
    - centered `Date Time Checker` title
    - `Day`, `Month`, `Year` inputs
@@ -30,18 +30,19 @@ Use this if you want to force rebuild and reinstall the latest app:
 4. Manually interact with the app on the emulator:
    - try one valid date
    - try one invalid date
-   - toggle theme if needed
+   - show that this is the installed Android app, not a browser simulation
 
-5. When you finish the manual demo, return to the command window and confirm whether you want to run automated testing.
+5. Return to the command window and confirm automated testing:
    - choose `Y` to run automation on the already installed app
-   - it skips redundant rebuild/reinstall steps for faster repeat demos
+   - the runner skips rebuild/reinstall/environment checks
+   - Maestro runs separate Mobile E2E cases immediately
 
-6. Open the generated report if automated testing runs:
+6. Review the generated HTML report:
 
 ```text
-reports\mobile-testing-report.txt
+topics\03-mobile-testing\reports\mobile-e2e-report\index.html
 ```
 
 ## Talk Track
 
-> We first show the installed mobile app directly on the emulator, just like a real user would use it. After the manual demo, we can optionally confirm and run automated testing to prove the same Android flow is testable end-to-end.
+> We first show the installed mobile app directly on the emulator, just like a real user would use it. After the manual demo, we confirm automated testing. The runner does not rebuild or reinstall; it runs Mobile E2E flows immediately and generates an HTML report with pass/fail status for each case.

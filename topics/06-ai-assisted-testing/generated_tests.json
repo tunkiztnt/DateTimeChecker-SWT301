@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC01",
+    "name": "Valid Leap Year Date",
+    "testType": "BVA",
+    "day": "29",
+    "month": "02",
+    "year": "2024",
+    "expected": "valid",
+    "message": "29/02/2024 is correct date time!"
+  },
+  {
+    "id": "TC02",
+    "name": "Invalid Leap Year Date",
+    "testType": "BVA",
+    "day": "29",
+    "month": "02",
+    "year": "2023",
+    "expected": "invalid",
+    "message": "29/02/2023 is NOT correct date time!"
+  },
+  {
+    "id": "TC03",
+    "name": "Day Out of Range",
+    "testType": "EP",
+    "day": "32",
+    "month": "05",
+    "year": "2020",
+    "expected": "error",
+    "message": "Input data for Day is out of range!"
+  },
+  {
+    "id": "TC04",
+    "name": "Year Below Lower Bound",
+    "testType": "BVA",
+    "day": "15",
+    "month": "08",
+    "year": "999",
+    "expected": "error",
+    "message": "Input data for Year is out of range!"
+  },
+  {
+    "id": "TC05",
+    "name": "Non-numeric Month Input",
+    "testType": "Error Guessing",
+    "day": "10",
+    "month": "abc",
+    "year": "2025",
+    "expected": "error",
+    "message": "Input data for Month is incorrect format!"
+  }
+]

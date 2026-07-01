@@ -1,19 +1,21 @@
-# Topic 3: Mobile Testing
+# Topic 3: Mobile E2E Testing
 
 ## Purpose
 
 This topic demonstrates the Flutter mobile version of `DateTimeChecker` on Android and separates:
 
-- manual demo of the updated mobile UI
-- optional automated testing with Maestro
+- manual demo of the installed mobile UI
+- fast automated Mobile E2E testing with Maestro
+- HTML/JSON report output similar to the PC E2E topic
 
 ## Main Files
 
 - Flutter app: `topics/03-mobile-testing/flutter_app/`
 - Start emulator and prepare demo: `topics/03-mobile-testing/start-emulator.bat`
 - Automated mobile test runner: `topics/03-mobile-testing/run-tests.bat`
-- Maestro flow: `topics/03-mobile-testing/maestro/date_time_checker_flow.yaml`
-- Report output: `reports/mobile-testing-report.txt`
+- Maestro E2E flows: `topics/03-mobile-testing/maestro/e2e/`
+- HTML report output: `topics/03-mobile-testing/reports/mobile-e2e-report/index.html`
+- JSON report output: `topics/03-mobile-testing/reports/mobile-e2e-report/results.json`
 
 ## Recommended Usage
 
@@ -31,18 +33,34 @@ This flow:
 - returns the emulator to the Home screen
 - lets you open the app manually
 - asks for confirmation before running automated tests
-- reuses the installed app when you confirm automation, instead of rebuilding immediately again
+- runs Mobile E2E immediately on the installed app when you confirm automation
+- skips Flutter build/reinstall/environment scan during the test step
+- skips Maestro driver reinstall and debug artifact capture for faster demo tapping
 
-If you want to force reinstall the latest build:
+If you want to force reinstall the latest app:
 
 ```powershell
 .\topics\03-mobile-testing\start-emulator.bat --refresh
 ```
 
-### 2. Optional automation
+### 2. Run only automated Mobile E2E
 
-The launcher already asks whether you want to run automation after the manual demo.
+```powershell
+.\topics\03-mobile-testing\run-tests.bat
+```
+
+The report opens automatically after the run and is saved at:
+
+```text
+topics/03-mobile-testing/reports/mobile-e2e-report/index.html
+```
+
+If you need Maestro screenshots/debug files for troubleshooting, run:
+
+```powershell
+.\topics\03-mobile-testing\run-mobile-testing.ps1 -DebugArtifacts -OpenReport
+```
 
 ## Demo Message
 
-“Topic 3 now starts like a real phone demo: the emulator opens, the app is already installed, and we manually open it first. Only after that do we confirm whether we want to run automated mobile testing.”
+“Topic 3 starts like a real phone demo: the emulator opens, the app is already installed, and we manually open it first. When we confirm automated testing, the script runs Android E2E flows directly on the installed app and exports an HTML report similar to the PC E2E report.”

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC01",
+    "selector": "#day",
+    "healedTo": "input (child of label's parent for \"Day\")"
+  },
+  {
+    "id": "TC01",
+    "selector": "#month",
+    "healedTo": "input (child of label's parent for \"Month\")"
+  },
+  {
+    "id": "TC02",
+    "selector": "#day",
+    "healedTo": "input (child of label's parent for \"Day\")"
+  },
+  {
+    "id": "TC02",
+    "selector": "#month",
+    "healedTo": "input (child of label's parent for \"Month\")"
+  },
+  {
+    "id": "TC03",
+    "selector": "#day",
+    "healedTo": "input (child of label's parent for \"Day\")"
+  },
+  {
+    "id": "TC03",
+    "selector": "#month",
+    "healedTo": "input (child of label's parent for \"Month\")"
+  },
+  {
+    "id": "TC04",
+    "selector": "#day",
+    "healedTo": "input (child of label's parent for \"Day\")"
+  },
+  {
+    "id": "TC04",
+    "selector": "#month",
+    "healedTo": "input (child of label's parent for \"Month\")"
+  },
+  {
+    "id": "TC05",
+    "selector": "#day",
+    "healedTo": "input (child of label's parent for \"Day\")"
+  },
+  {
+    "id": "TC05",
+    "selector": "#month",
+    "healedTo": "input (child of label's parent for \"Month\")"
+  }
+]

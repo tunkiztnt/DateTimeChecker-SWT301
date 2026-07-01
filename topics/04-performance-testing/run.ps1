@@ -14,7 +14,7 @@ if (-not $env:PERF_CONCURRENCY) {
     $env:PERF_CONCURRENCY = "10"
 }
 if (-not $env:PERF_DURATION_MS) {
-    $env:PERF_DURATION_MS = "15000"
+    $env:PERF_DURATION_MS = "5000"
 }
 if (-not $env:PERF_LIVE_INTERVAL_MS) {
     $env:PERF_LIVE_INTERVAL_MS = "1000"
