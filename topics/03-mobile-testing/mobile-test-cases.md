@@ -40,3 +40,4 @@ com.datetimechecker.date_time_checker
 - Test launcher: `topics/03-mobile-testing/run-tests.bat`
 - HTML report: `topics/03-mobile-testing/reports/mobile-e2e-report/index.html`
 - JSON report: `topics/03-mobile-testing/reports/mobile-e2e-report/results.json`
+- CSV report: `topics/03-mobile-testing/reports/mobile-e2e-report/results.csv`

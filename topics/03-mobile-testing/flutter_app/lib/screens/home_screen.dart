@@ -26,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _validator = DateTimeValidationService();
+  final _scrollController = ScrollController();
   final _dayCtrl = TextEditingController();
   final _monthCtrl = TextEditingController();
   final _yearCtrl = TextEditingController();
@@ -48,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _clockTimer?.cancel();
+    _scrollController.dispose();
     _dayCtrl.dispose();
     _monthCtrl.dispose();
     _yearCtrl.dispose();
@@ -84,6 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       _result = result;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) {
+        return;
+      }
+
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
 
@@ -157,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 )
               : SingleChildScrollView(
+                  controller: _scrollController,
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                   child: Column(
                     children: [

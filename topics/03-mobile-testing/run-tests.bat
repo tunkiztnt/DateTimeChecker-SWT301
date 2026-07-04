@@ -26,6 +26,7 @@ echo [STEP 2/2] Summary
 echo  Mobile E2E flow: PASS
 echo  HTML report : topics\03-mobile-testing\reports\mobile-e2e-report\index.html
 echo  JSON report : topics\03-mobile-testing\reports\mobile-e2e-report\results.json
+echo  CSV report  : topics\03-mobile-testing\reports\mobile-e2e-report\results.csv
 echo  MOBILE TESTING COMPLETED SUCCESSFULLY!
 echo ============================================================
 

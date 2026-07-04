@@ -27,6 +27,7 @@ $localAdb = Join-Path $localAndroidSdk "platform-tools\adb.exe"
 $appId = "com.datetimechecker.date_time_checker"
 $apkOutputDir = Join-Path $flutterApp "build\app\outputs\flutter-apk"
 $runTestsScript = Join-Path $PSScriptRoot "run-mobile-testing.ps1"
+$optimizedInstallMarker = Join-Path $PSScriptRoot ".optimized-mobile-install"
 
 function Resolve-CommandPath {
     param(
@@ -58,12 +59,24 @@ function Ensure-DemoAppInstalled {
     $isInstalledOutput = & $AdbPath -s $CurrentDeviceId shell pm list packages $appId 2>$null
     $isInstalled = @($isInstalledOutput | Where-Object { $_ -match [regex]::Escape($appId) }).Count -gt 0
 
-    if ($isInstalled -and -not $RefreshApp) {
+    $releaseApkPath = Join-Path $apkOutputDir "app-release.apk"
+    $debugApkPath = Join-Path $apkOutputDir "app-debug.apk"
+
+    $hasOptimizedInstall = Test-Path -LiteralPath $optimizedInstallMarker
+
+    if ($isInstalled -and -not $RefreshApp -and $hasOptimizedInstall -and (Test-Path -LiteralPath $releaseApkPath)) {
         Write-Host "[STEP 2/4] App already installed. Skipping reinstall for faster startup." -ForegroundColor Green
         return
     }
 
-    Write-Host "[STEP 2/4] Build latest Flutter APK..." -ForegroundColor Yellow
+    if ($isInstalled -and -not $RefreshApp -and -not $hasOptimizedInstall) {
+        Write-Host "[STEP 2/4] App is installed, but optimized install marker is missing. Installing release build once..." -ForegroundColor Yellow
+    } elseif ($isInstalled -and -not $RefreshApp -and -not (Test-Path -LiteralPath $releaseApkPath)) {
+        Write-Host "[STEP 2/4] App is installed, but release APK is missing. Building optimized release APK once..." -ForegroundColor Yellow
+    } else {
+        Write-Host "[STEP 2/4] Build optimized Flutter release APK..." -ForegroundColor Yellow
+    }
+
     $abi = (& $AdbPath -s $CurrentDeviceId shell getprop ro.product.cpu.abi).Trim()
     $targetPlatform = switch ($abi) {
         "x86_64" { "android-x64" }
@@ -74,7 +87,7 @@ function Ensure-DemoAppInstalled {
 
     Push-Location $flutterApp
     try {
-        & $FlutterPath build apk --debug --target-platform $targetPlatform
+        & $FlutterPath build apk --release --target-platform $targetPlatform
         if ($LASTEXITCODE -ne 0) {
             throw "Flutter build failed."
         }
@@ -82,13 +95,19 @@ function Ensure-DemoAppInstalled {
         Pop-Location
     }
 
-    $apkPath = Join-Path $apkOutputDir "app-debug.apk"
+    $apkPath = if (Test-Path -LiteralPath $releaseApkPath) {
+        $releaseApkPath
+    } else {
+        $debugApkPath
+    }
+
     if (-not (Test-Path -LiteralPath $apkPath)) {
         throw "APK was not created at $apkPath"
     }
 
-    Write-Host "[STEP 3/4] Install app on emulator..." -ForegroundColor Yellow
+    Write-Host "[STEP 3/4] Install optimized app on emulator..." -ForegroundColor Yellow
     & $AdbPath -s $CurrentDeviceId install -r $apkPath | Out-Host
+    "Installed optimized release APK at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" | Set-Content -LiteralPath $optimizedInstallMarker -Encoding UTF8
 }
 
 Write-Host "============================================================" -ForegroundColor Cyan
@@ -140,6 +159,7 @@ Write-Host "[STEP 4/4] Return emulator to Home screen for manual demo..." -Foreg
 
 Write-Host ""
 Write-Host "The emulator is ready and the app is installed." -ForegroundColor Green
+Write-Host "Tip: If the app still opens slowly, run start-emulator.bat --refresh once to install the optimized release build." -ForegroundColor Yellow
 Write-Host "Open `Date Time Checker` manually on the Android home screen or app drawer." -ForegroundColor Cyan
 Write-Host "When your manual demo is done, come back here." -ForegroundColor Cyan
 Write-Host ""

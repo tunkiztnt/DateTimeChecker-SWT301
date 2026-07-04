@@ -173,8 +173,12 @@ function Optimize-AvdConfig {
     $desiredValues = [ordered]@{
         "hw.gpu.enabled" = "yes"
         "hw.gpu.mode" = "host"
-        "hw.ramSize" = "4096"
+        "hw.cpu.ncore" = "4"
+        "hw.ramSize" = "3072"
         "vm.heapSize" = "512"
+        "hw.lcd.width" = "720"
+        "hw.lcd.height" = "1280"
+        "hw.lcd.density" = "320"
         "showDeviceFrame" = "no"
         "hw.audioInput" = "no"
         "hw.camera.back" = "none"
@@ -260,9 +264,9 @@ function Initialize-DeviceForDemo {
     & $adb shell wm dismiss-keyguard 2>$null | Out-Null
     & $adb shell input keyevent 82 2>$null | Out-Null
     & $adb shell input keyevent 3 2>$null | Out-Null
-    & $adb shell settings put global window_animation_scale 0.5 2>$null | Out-Null
-    & $adb shell settings put global transition_animation_scale 0.5 2>$null | Out-Null
-    & $adb shell settings put global animator_duration_scale 0.5 2>$null | Out-Null
+    & $adb shell settings put global window_animation_scale 0 2>$null | Out-Null
+    & $adb shell settings put global transition_animation_scale 0 2>$null | Out-Null
+    & $adb shell settings put global animator_duration_scale 0 2>$null | Out-Null
 }
 
 Ensure-Directory -Path (Join-Path $env:LOCALAPPDATA "mobile_dev\maestro\Logs")
@@ -279,6 +283,7 @@ if (-not (Test-Path -LiteralPath $adb)) {
 $devices = Get-ConnectedDevices
 if ($devices.Count -gt 0) {
     Write-Output "Android device/emulator is already connected."
+    Write-Output "Performance note: GPU/RAM/resolution tuning is applied on the next emulator start. Close the emulator and run start-emulator.bat again if it still feels laggy."
     Initialize-DeviceForDemo
     & $adb devices
     exit 0
@@ -290,6 +295,10 @@ Write-Output "Starting Android emulator: $resolvedEmulatorId"
 $arguments = @(
     "-avd", $resolvedEmulatorId,
     "-gpu", "host",
+    "-accel", "on",
+    "-cores", "4",
+    "-memory", "3072",
+    "-no-boot-anim",
     "-noaudio",
     "-camera-back", "none",
     "-camera-front", "none",

@@ -19,6 +19,7 @@ Thumbs.db
 # Generated topic reports
 topics/reports/*.txt
 topics/03-mobile-testing/reports/
+topics/03-mobile-testing/.optimized-mobile-install
 
 # Generated Flutter artifacts
 topics/03-mobile-testing/flutter_app/build/

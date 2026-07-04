@@ -18,6 +18,8 @@ Use this if you want to force rebuild and reinstall the latest app:
 .\topics\03-mobile-testing\start-emulator.bat --refresh
 ```
 
+If the emulator is already open but feels laggy, close the emulator window first, then run the `--refresh` command once. This applies the lighter emulator resolution and installs the optimized release APK.
+
 2. On the emulator home screen, tap `Date Time Checker` manually.
 
 3. Show that the mobile screen follows the PC layout:

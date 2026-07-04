@@ -16,6 +16,7 @@ This topic demonstrates the Flutter mobile version of `DateTimeChecker` on Andro
 - Maestro E2E flows: `topics/03-mobile-testing/maestro/e2e/`
 - HTML report output: `topics/03-mobile-testing/reports/mobile-e2e-report/index.html`
 - JSON report output: `topics/03-mobile-testing/reports/mobile-e2e-report/results.json`
+- CSV report output: `topics/03-mobile-testing/reports/mobile-e2e-report/results.csv`
 
 ## Recommended Usage
 
@@ -42,6 +43,24 @@ If you want to force reinstall the latest app:
 ```powershell
 .\topics\03-mobile-testing\start-emulator.bat --refresh
 ```
+
+### Performance Notes
+
+The emulator is tuned for demo speed:
+
+- 720x1280 screen instead of a heavy full Pixel 5 resolution
+- host GPU acceleration
+- 4 CPU cores and 3GB RAM
+- Android animations disabled
+- Flutter release APK for faster app startup
+
+If the emulator is already open and still feels laggy, close the Android Emulator window completely, then run:
+
+```powershell
+.\topics\03-mobile-testing\start-emulator.bat --refresh
+```
+
+The `--refresh` run installs the optimized release APK once. Later runs can skip reinstall for faster startup.
 
 ### 2. Run only automated Mobile E2E
 
