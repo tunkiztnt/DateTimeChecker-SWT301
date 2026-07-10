@@ -1,0 +1,88 @@
+name: Topic 7 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, appVideo, cicdtest ]
+  pull_request:
+    branches: [ main, master, appVideo, cicdtest ]
+  workflow_dispatch:
+
+jobs:
+  ci_cd_demo:
+    name: Build, Test, Report, Package
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: Run Topic 7 pipeline
+        shell: powershell
+        run: .\topics\07-cicd-reporting\run.ps1 -CiMode
+
+      - name: Upload CI summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-summary
+          path: topics/reports/topic07-cicd/ci-summary.md
+          if-no-files-found: warn
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-playwright-report
+          path: playwright-report/
+          if-no-files-found: warn
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-allure-report
+          path: allure-report/
+          if-no-files-found: warn
+
+      - name: Upload visual current images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-visual-current
+          path: topics/05-visual-regression/current-run-images/
+          if-no-files-found: warn
+
+      - name: Upload visual diff images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-visual-diff
+          path: topics/05-visual-regression/diff-images/
+          if-no-files-found: warn
+
+      - name: Upload release package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: topic7-release-zip
+          path: topics/reports/topic07-cicd/DateTimeChecker-release.zip
+          if-no-files-found: warn

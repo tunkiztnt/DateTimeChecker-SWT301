@@ -1,0 +1,86 @@
+appId: com.datetimechecker.date_time_checker
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "Date Time Checker"
+- assertVisible: "Waiting for validation"
+
+- tapOn:
+    id: "clear_data_button"
+
+- tapOn:
+    id: "day_input"
+- inputText: "30"
+- tapOn:
+    id: "month_input"
+- inputText: "5"
+- tapOn:
+    id: "year_input"
+- inputText: "2026"
+- hideKeyboard
+- tapOn:
+    id: "check_now_button"
+
+- assertVisible: "Valid date"
+- assertVisible: "30/05/2026 is a valid date."
+- scrollUntilVisible:
+    element:
+      text: "Weekday"
+- assertVisible: "Saturday"
+- scrollUntilVisible:
+    element:
+      text: "Leap Year"
+- assertVisible: "No"
+
+- tapOn:
+    id: "clear_data_button"
+
+- tapOn:
+    id: "day_input"
+- inputText: "29"
+- tapOn:
+    id: "month_input"
+- inputText: "2"
+- tapOn:
+    id: "year_input"
+- inputText: "2025"
+- hideKeyboard
+- tapOn:
+    id: "check_now_button"
+
+- assertVisible: "Invalid date"
+- assertVisible: "Month 2 of year 2025 has only 28 days."
+
+- tapOn:
+    id: "clear_data_button"
+
+- tapOn:
+    id: "day_input"
+- inputText: "29"
+- tapOn:
+    id: "month_input"
+- inputText: "2"
+- tapOn:
+    id: "year_input"
+- inputText: "2024"
+- hideKeyboard
+- tapOn:
+    id: "check_now_button"
+
+- assertVisible: "Valid date"
+- assertVisible: "29/02/2024 is a valid date."
+- scrollUntilVisible:
+    element:
+      text: "Leap Year"
+- assertVisible: "Yes"
+
+- scrollUntilVisible:
+    element:
+      id: "theme_toggle_button"
+    direction: UP
+- tapOn:
+    id: "theme_toggle_button"
+- scrollUntilVisible:
+    element:
+      text: "Valid date"

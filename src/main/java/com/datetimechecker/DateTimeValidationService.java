@@ -28,55 +28,61 @@ public class DateTimeValidationService {
      * and a human-readable message.
      */
     public ValidationResult validate(String dayStr, String monthStr, String yearStr) {
-        // Step 1: Check null/blank
+        // --- 1. Validate Day ---
         if (dayStr == null || dayStr.trim().isEmpty()) {
-            return new ValidationResult(RESULT_ERROR, "Ngày không được để trống.");
+            return new ValidationResult(RESULT_ERROR, "Day cannot be empty.");
         }
-        if (monthStr == null || monthStr.trim().isEmpty()) {
-            return new ValidationResult(RESULT_ERROR, "Tháng không được để trống.");
-        }
-        if (yearStr == null || yearStr.trim().isEmpty()) {
-            return new ValidationResult(RESULT_ERROR, "Năm không được để trống.");
-        }
-
-        // Step 2: Check each is a valid integer (no decimals, no letters)
-        if (dayStr.contains(".") || monthStr.contains(".") || yearStr.contains(".")) {
-            return new ValidationResult(RESULT_ERROR, "Ngày, tháng, năm phải là số nguyên.");
-        }
-
-        int day, month, year;
+        int day;
         try {
+            if (dayStr.contains(".")) {
+                throw new NumberFormatException();
+            }
             day = Integer.parseInt(dayStr.trim());
         } catch (NumberFormatException e) {
-            return new ValidationResult(RESULT_ERROR, "Ngày phải là số nguyên.");
+            return new ValidationResult(RESULT_ERROR, "Day must be an integer.");
         }
+        if (day < 1 || day > 31) {
+            return new ValidationResult(RESULT_ERROR, "Day must be in range 1-31.");
+        }
+
+        // --- 2. Validate Month ---
+        if (monthStr == null || monthStr.trim().isEmpty()) {
+            return new ValidationResult(RESULT_ERROR, "Month cannot be empty.");
+        }
+        int month;
         try {
+            if (monthStr.contains(".")) {
+                throw new NumberFormatException();
+            }
             month = Integer.parseInt(monthStr.trim());
         } catch (NumberFormatException e) {
-            return new ValidationResult(RESULT_ERROR, "Tháng phải là số nguyên.");
-        }
-        try {
-            year = Integer.parseInt(yearStr.trim());
-        } catch (NumberFormatException e) {
-            return new ValidationResult(RESULT_ERROR, "Năm phải là số nguyên.");
-        }
-
-        // Step 3: Check ranges: day 1-31, month 1-12, year 1000-3000
-        if (day < 1 || day > 31) {
-            return new ValidationResult(RESULT_ERROR, "Ngày phải nằm trong khoảng 1-31.");
+            return new ValidationResult(RESULT_ERROR, "Month must be an integer.");
         }
         if (month < 1 || month > 12) {
-            return new ValidationResult(RESULT_ERROR, "Tháng phải nằm trong khoảng 1-12.");
-        }
-        if (year < 1000 || year > 3000) {
-            return new ValidationResult(RESULT_ERROR, "Năm phải nằm trong khoảng 1000-3000.");
+            return new ValidationResult(RESULT_ERROR, "Month must be in range 1-12.");
         }
 
-        // Step 4: Use LocalDate.of(year, month, day) in a try-catch
-        //         → success = VALID, DateTimeException = INVALID
+        // --- 3. Validate Year ---
+        if (yearStr == null || yearStr.trim().isEmpty()) {
+            return new ValidationResult(RESULT_ERROR, "Year cannot be empty.");
+        }
+        int year;
+        try {
+            if (yearStr.contains(".")) {
+                throw new NumberFormatException();
+            }
+            year = Integer.parseInt(yearStr.trim());
+        } catch (NumberFormatException e) {
+            return new ValidationResult(RESULT_ERROR, "Year must be an integer.");
+        }
+        if (year < 1000 || year > 3000) {
+            return new ValidationResult(RESULT_ERROR, "Year must be in range 1000-3000.");
+        }
+
+        // --- 4. Validate Date (Days in Month) ---
         try {
             LocalDate.of(year, month, day);
-            return new ValidationResult(RESULT_VALID, "Ngày hợp lệ.");
+            return new ValidationResult(RESULT_VALID, "Valid date.");
         } catch (java.time.DateTimeException e) {
             // Find the correct maxDays for the month to build the custom message
             boolean isLeap = ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
@@ -86,7 +92,7 @@ public class DateTimeValidationService {
                 case 4: case 6: case 9: case 11: maxDays = 30; break;
                 default: maxDays = 31;
             }
-            String msg = "Tháng " + month + " năm " + year + " chỉ có " + maxDays + " ngày.";
+            String msg = "Month " + month + " of year " + year + " has only " + maxDays + " days.";
             return new ValidationResult(RESULT_INVALID, msg);
         }
     }
@@ -169,8 +175,8 @@ public class DateTimeValidationService {
         if (request == null) {
             result.valid = false;
             result.result = RESULT_ERROR;
-            result.message = "Yêu cầu rỗng.";
-            result.errors.add("Yêu cầu rỗng.");
+            result.message = "Empty request.";
+            result.errors.add("Empty request.");
             return result;
         }
 
@@ -194,7 +200,7 @@ public class DateTimeValidationService {
             boolean isLeap = date.isLeapYear();
             int maxDays = date.lengthOfMonth();
 
-            String weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("vi", "VN"));
+            String weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US);
             if (weekday != null) {
                 weekday = weekday.toLowerCase();
                 if (!weekday.isEmpty()) {
@@ -204,7 +210,7 @@ public class DateTimeValidationService {
 
             result.details = new DateTimeCheckDetails();
             result.details.display = String.format("%02d/%02d/%04d", day, month, year);
-            result.details.leapYear = isLeap ? "Có" : "Không";
+            result.details.leapYear = isLeap ? "Yes" : "No";
             result.details.monthDays = String.valueOf(maxDays);
             result.details.weekday = weekday;
         } else {

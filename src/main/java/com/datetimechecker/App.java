@@ -33,7 +33,6 @@ public final class App {
         int port = readPort();
         HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", port), 0);
         server.createContext("/api/datetime/check", new DateTimeCheckHandler());
-        server.createContext("/api/check-date", new DateTimeCheckHandler());
         server.createContext("/", new StaticFileHandler());
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
@@ -106,6 +105,9 @@ public final class App {
             byte[] content = Files.readAllBytes(file);
             Headers headers = exchange.getResponseHeaders();
             headers.set("Content-Type", contentType(file));
+            headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+            headers.set("Pragma", "no-cache");
+            headers.set("Expires", "0");
             exchange.sendResponseHeaders(200, "HEAD".equalsIgnoreCase(exchange.getRequestMethod()) ? -1 : content.length);
             if (!"HEAD".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try (OutputStream output = exchange.getResponseBody()) {
