@@ -21,9 +21,9 @@
   },
   {
     "id": "TC03",
-    "name": "Day Out of Range",
+    "name": "Day Out of Lower Range",
     "testType": "EP",
-    "day": "32",
+    "day": "0",
     "month": "05",
     "year": "2020",
     "expected": "error",
@@ -31,22 +31,72 @@
   },
   {
     "id": "TC04",
-    "name": "Year Below Lower Bound",
-    "testType": "BVA",
+    "name": "Month Out of Upper Range",
+    "testType": "EP",
     "day": "15",
-    "month": "08",
+    "month": "13",
+    "year": "2020",
+    "expected": "error",
+    "message": "Input data for Month is out of range!"
+  },
+  {
+    "id": "TC05",
+    "name": "Year Below Minimum",
+    "testType": "BVA",
+    "day": "01",
+    "month": "01",
     "year": "999",
     "expected": "error",
     "message": "Input data for Year is out of range!"
   },
   {
-    "id": "TC05",
-    "name": "Non-numeric Month Input",
+    "id": "TC06",
+    "name": "Year Above Maximum",
+    "testType": "BVA",
+    "day": "01",
+    "month": "01",
+    "year": "3001",
+    "expected": "error",
+    "message": "Input data for Year is out of range!"
+  },
+  {
+    "id": "TC07",
+    "name": "Non-Integer Day Input",
+    "testType": "Error Guessing",
+    "day": "abc",
+    "month": "10",
+    "year": "2022",
+    "expected": "error",
+    "message": "Input data for Day is incorrect format!"
+  },
+  {
+    "id": "TC08",
+    "name": "Empty Month Input",
     "testType": "Error Guessing",
     "day": "10",
-    "month": "abc",
-    "year": "2025",
+    "month": "",
+    "year": "2022",
     "expected": "error",
     "message": "Input data for Month is incorrect format!"
+  },
+  {
+    "id": "TC09",
+    "name": "Invalid Day for Month",
+    "testType": "EP",
+    "day": "31",
+    "month": "04",
+    "year": "2022",
+    "expected": "invalid",
+    "message": "31/04/2022 is NOT correct date time!"
+  },
+  {
+    "id": "TC10",
+    "name": "Boundary Max Valid Date",
+    "testType": "BVA",
+    "day": "31",
+    "month": "12",
+    "year": "3000",
+    "expected": "valid",
+    "message": "31/12/3000 is correct date time!"
   }
 ]
