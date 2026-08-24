@@ -8,7 +8,8 @@
     "test:web": "npx playwright test topics/02-web-e2e-testing/",
     "test:visual": "npx playwright test topics/05-visual-regression/",
     "topic7:ci": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\topics\\07-cicd-reporting\\run.ps1 -CiMode",
-    "ai-test": "node scripts/ai-testing-tool.js"
+    "ai-test": "node scripts/ai-testing-tool.js",
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run.ps1"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
